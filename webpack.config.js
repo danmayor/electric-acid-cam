@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = [
     {
         mode: 'development',
-        entry: './src/main.ts',
+        entry: './src/app/Program.ts',
         target: 'electron-main',
         module: {
             rules: [{
@@ -14,13 +14,13 @@ module.exports = [
         },
         output: {
             path: __dirname + '/dist',
-            filename: 'main.js'
+            filename: 'acid-cam.js'
         }
     },
 
     {
         mode: 'development',
-        entry: './src/App.tsx',
+        entry: './src/ui/App.tsx',
         target: 'electron-renderer',
         devtool: 'source-map',
         module: {
@@ -38,7 +38,28 @@ module.exports = [
             filename: 'App.js'
         },
         plugins: [
-            new HtmlWebpackPlugin({ template: './src/index.html' })
+            new HtmlWebpackPlugin({ template: './src/app/index.html' })
         ]
+    },
+
+    {
+        mode: 'development',
+        entry: './src/app/preload.ts',
+        target: 'electron-renderer',
+        devtool: 'source-map',
+        module: {
+            rules: [{
+                test: /\.ts(x?)$/,
+                include: /src/,
+                use: [{ loader: 'ts-loader' }]
+            }]
+        },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js']
+        },
+        output: {
+            path: __dirname + '/dist',
+            filename: 'preload.js'
+        }
     }
 ];
