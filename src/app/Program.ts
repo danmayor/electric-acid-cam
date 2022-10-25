@@ -17,7 +17,11 @@ declare global {
  * machine (including file system and ability to execute processes)
  */
 class Program {
-    constructor() {
+    private isMaximized: boolean = false;
+    private win: BrowserWindow;
+
+    constructor(win?: BrowserWindow) {
+        this.win = win;
     }
 
     /**
@@ -40,12 +44,33 @@ class Program {
     }
 
     /**
+     * Toggles between maximized and windowed
+     */
+    private maximize() {
+        if (this.isMaximized)
+            this.win.unmaximize();
+        else
+            this.win.maximize();
+        
+        this.isMaximized = !this.isMaximized;
+    }
+
+    /**
+     * Minimizes the window
+     */
+    private minimize() {
+        this.win.minimize();
+    }
+
+    /**
      * Registers our window.app handlers
      */
     public registerHandlers() {
         app.on('window-all-closed', program.closeApp);
 
         ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command.props));
+        ipcMain.on('app/maximize', () => this.maximize());
+        ipcMain.on('app/minimize', () => this.minimize());
     }
 
     /**
@@ -53,7 +78,7 @@ class Program {
      * loads the UI renderer content.
      */
     public main() {
-        const win = new BrowserWindow({
+        this.win = new BrowserWindow({
             width: 1024,
             height: 720,
             center: true,
@@ -66,10 +91,10 @@ class Program {
         });
 
         // Scoping is weird, create an instance of me and use that to register handlers
-        const program = new Program();
+        const program = new Program(this.win);
         program.registerHandlers();
 
-        win.loadFile('index.html');
+        this.win.loadFile('index.html');
     }
 }
 

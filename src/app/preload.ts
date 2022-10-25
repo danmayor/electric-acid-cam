@@ -5,5 +5,13 @@ import LaunchRequest from "./ipc/LaunchRequest";
 contextBridge.exposeInMainWorld('app', {
     launchAcidCam: (launchRequest: LaunchRequest) => {
         ipcRenderer.send('app/launch', launchRequest)
+    },
+
+    maximize: () => {
+        ipcRenderer.send('app/maximize');
+    },
+
+    minimize: () => {
+        ipcRenderer.send('app/minimize');
     }
 });

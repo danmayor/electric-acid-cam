@@ -1,32 +1,46 @@
 import * as React from 'react';
-import { MdHelp, MdOutlineSettingsApplications, MdVideoSettings } from 'react-icons/md';
+import { MdDashboard, MdHelp, MdOutlineSettingsApplications, MdVideoSettings } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
-import { Col, Row } from 'reactstrap';
-
 const LeftNav: React.FC = () => {
-    return <div className="bg-dark text-light">
-        <Link to="/">
-            <Row>
-                <Col xs={2}><MdOutlineSettingsApplications /></Col>
-                <Col xs={10}>Settings</Col>
-            </Row>
-        </Link>
+    return <nav className="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div className="sb-sidenav-menu">
+            <div className="nav">
+                <Link className="nav-link" to="/">
+                    <div className="sb-nav-link-icon">
+                        <MdDashboard />
+                    </div>
+                    Dashboard
+                </Link>
 
-        <Link to="/launcher">
-            <Row>
-                <Col xs={2}><MdVideoSettings /></Col>
-                <Col xs={10}>Launch</Col>
-            </Row>
-        </Link>
+                <Link className="nav-link" to="/settings">
+                    <div className="sb-nav-link-icon">
+                        <MdOutlineSettingsApplications />
+                    </div>
+                    Settings
+                </Link>
 
-        <Link to="/help">
-            <Row>
-                <Col xs={2}><MdHelp /></Col>
-                <Col xs={10}>Help</Col>
-            </Row>
-        </Link>
-    </div>
+                <Link className="nav-link" to="/launcher">
+                    <div className="sb-nav-link-icon">
+                        <MdVideoSettings />
+                    </div>
+                    Acid Cam
+                </Link>
+
+                <Link className="nav-link" to="/help">
+                    <div className="sb-nav-link-icon">
+                        <MdHelp />
+                    </div>
+                    Help
+                </Link>
+            </div>
+        </div>
+
+        <div className="sb-sidenav-footer">
+            <div className="small">Version:</div>
+            0.1.0
+        </div>
+    </nav>;
 };
 
 export default LeftNav;

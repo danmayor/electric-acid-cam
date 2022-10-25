@@ -9,4 +9,14 @@ export default interface AppApi {
      * Defined in Program.launchAcidCam
      */
     launchAcidCam: (launchRequest: LaunchRequest) => void;
+
+    /**
+     * Defined in Program.maximize
+     */
+    maximize: () => void;
+
+    /**
+     * Defined in Program.minimize
+     */
+    minimize: () => void;
 };
