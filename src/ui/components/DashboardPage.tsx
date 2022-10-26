@@ -2,13 +2,17 @@ import * as React from 'react';
 import { FaGreaterThan } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
 import { Col, Row } from 'reactstrap';
+import PageHeader from './PageHeader';
 
 const DashboardPage: React.FC = () => {
     return <>
-        <h1 className="mt-4"><MdDashboard />&nbsp;Acid Dash</h1>
-        <ol className="breadcrumb mb-4">
-            <li className="breadcrumb-item active">Acid Dash</li>
-        </ol>
+        <PageHeader
+            icon={<MdDashboard />}
+            title='Acid Dash'
+            crumbs={[
+                {active: true, url: '/dashboard', label: 'Dashboard'}
+            ]}
+        />
 
         <Row>
             <Col>
