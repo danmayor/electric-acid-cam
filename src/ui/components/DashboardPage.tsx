@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FaGreaterThan } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
 import { Col, Row } from 'reactstrap';
-import PageHeader from './PageHeader';
+import PageHeader from './common/PageHeader';
 
 const DashboardPage: React.FC = () => {
     return <>
@@ -10,7 +10,7 @@ const DashboardPage: React.FC = () => {
             icon={<MdDashboard />}
             title='Acid Dash'
             crumbs={[
-                {active: true, url: '/dashboard', label: 'Dashboard'}
+                {active: true, url: '/', label: 'Dashboard'}
             ]}
         />
 

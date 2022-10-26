@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MdVideoSettings } from 'react-icons/md';
 import { Button } from 'reactstrap';
+import PageHeader from './common/PageHeader';
 
 const LaunchPage: React.FC = () => {
     /**
@@ -18,10 +19,17 @@ const LaunchPage: React.FC = () => {
     }, []);
 
     return <>
-        <h1>
-            <MdVideoSettings />&nbsp;
-            Launcher page
-        </h1>
+        <PageHeader
+            icon={<MdVideoSettings />}
+            title='Launch Acid Cam'
+            crumbs={[
+                { active: true, url: '/launcher', label: 'Launcher' }
+            ]}
+        />
+
+        <h2>Acid Cam Options:</h2>
+        Coming soon<br /><br />
+        
         <Button className="btn-success" onClick={onLaunchClick}>Launch AcidCam!</Button>
     </>;
 };

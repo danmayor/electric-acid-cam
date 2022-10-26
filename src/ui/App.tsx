@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
-import AppNav from './components/AppNav';
+import AppNav from './components/layout/AppNav';
 import DashboardPage from './components/DashboardPage';
 import HelpPage from './components/HelpPage';
 import LaunchPage from './components/LaunchPage';
-import LeftNav from './components/LeftNav';
+import LeftNav from './components/layout/LeftNav';
 import SettingsPage from './components/SettingsPage';
 
 /**
