@@ -79,8 +79,8 @@ class Program {
      */
     public main() {
         this.win = new BrowserWindow({
-            width: 1024,
-            height: 720,
+            width: 1200,
+            height: 900,
             center: true,
             frame: false,
             title: 'Electric Acid Cam',

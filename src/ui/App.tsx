@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { Container } from 'reactstrap';
 
 import AppNav from './components/AppNav';
 import DashboardPage from './components/DashboardPage';
@@ -27,12 +28,16 @@ const App: React.FC = () => {
             </div>
 
             <div id="layoutSidenav_content">
-                <Routes>
-                    <Route path="help" element={<HelpPage />} />
-                    <Route path="launcher" element={<LaunchPage />} />
-                    <Route path="settings" element={<SettingsPage />} />
-                    <Route path="" element={<DashboardPage />} />
-                </Routes>
+                <main>
+                    <Container fluid={true} className="px-4">
+                        <Routes>
+                            <Route path="help" element={<HelpPage />} />
+                            <Route path="launcher" element={<LaunchPage />} />
+                            <Route path="settings" element={<SettingsPage />} />
+                            <Route path="" element={<DashboardPage />} />
+                        </Routes>
+                    </Container>
+                </main>
             </div>
         </div>
     </HashRouter>;

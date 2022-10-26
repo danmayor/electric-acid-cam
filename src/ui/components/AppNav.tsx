@@ -46,7 +46,7 @@ const AppNav: React.FC = () => {
             </NavItem>
 
             <NavItem>
-                <a className="text-danger nav-link" onClick={onClose} href="#">
+                <a className="text-white nav-link" onClick={onClose} href="#">
                     <MdClose />
                 </a>
             </NavItem>
