@@ -25,3 +25,8 @@ html, body, #appContainer {
 .nav-item .btn {
     cursor: default;
 }
+
+.input-label {
+    display: block;
+    font-weight: bold;
+}

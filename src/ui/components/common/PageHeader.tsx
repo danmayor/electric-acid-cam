@@ -9,7 +9,7 @@ export interface PageHeaderProps {
     /**
      * Optional icon component to render in the page header
      */
-    icon?: React.Component | any;
+    icon?: React.ReactNode | string;
 
     /**
      * Title to display in the page header

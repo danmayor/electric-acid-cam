@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { MdOutlineSettingsApplications } from 'react-icons/md';
-import { Card, CardBody, CardHeader, Col, Input, Row } from 'reactstrap';
+import { Card, CardBody, CardFooter, CardHeader, Col, Input, Row } from 'reactstrap';
+import FolderSelectInput from './common/FolderSelectInput';
 import PageHeader from './common/PageHeader';
+import TextInput from './common/TextInput';
 
 const SettingsPage: React.FC = () => {
     return <>
@@ -13,20 +15,30 @@ const SettingsPage: React.FC = () => {
             ]}
         />
 
-        <Card>
-            <CardHeader>Application Settings</CardHeader>
-            <CardBody>
-                <Row>
-                    <Col xs={12} sm={6}>Acid Cam Path</Col>
-                    <Col xs={12} sm={6}><Input type="text" /></Col>
-                </Row>
+        <form>
+            <Card>
+                <CardHeader>
+                    <h2>Application Settings</h2>
+                </CardHeader>
 
-                <Row>
-                    <Col xs={12} sm={6}>Capture Path</Col>
-                    <Col xs={12} sm={6}><Input type="text" /></Col>
-                </Row>
-            </CardBody>
-        </Card>
+                <CardBody>
+                    <Row>
+                        <Col xs={12} sm={6}>
+                            <FolderSelectInput className="mb-2" label="AcidCam path:" />
+                        </Col>
+
+                        <Col xs={12} sm={6}>
+                            <FolderSelectInput className="mb-2" label="Capture path:" />
+                        </Col>
+                    </Row>
+                    
+                </CardBody>
+
+                <CardFooter className="text-end">
+                    <button className="btn btn-primary">Save Changes</button>
+                </CardFooter>
+            </Card>
+        </form>
     </>;
 };
 
