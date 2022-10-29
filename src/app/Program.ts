@@ -1,7 +1,10 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, OpenDialogOptions, OpenDialogReturnValue } from 'electron';
 import * as path from 'path';
-import AppApi from './ipc/AppApi';
-import LaunchRequest from './ipc/LaunchRequest';
+import * as fs from 'fs';
+import * as fsa from 'fs/promises';
+import AppApi from '../common/AppApi';
+import LaunchRequest from '../common/ipc/LaunchRequest';
+import AppSettings from '../common/AppSettings';
 
 /**
  * Adds our window.electronAPI property to global definitions
@@ -17,7 +20,19 @@ declare global {
  * machine (including file system and ability to execute processes)
  */
 class Program {
+    /**
+     * Path to the file where we store app settings
+     */
+    private appSettingsFilename = `${__dirname}/.appsettings`;
+
+    /**
+     * Tells us if the window is maximized now or not
+     */
     private isMaximized: boolean = false;
+
+    /**
+     * Reference to the browser window we created
+     */
     private win: BrowserWindow;
 
     constructor(win?: BrowserWindow) {
@@ -44,6 +59,25 @@ class Program {
     }
 
     /**
+     * Attempts to load AppSettings from __dirname/.appsettings, if not found
+     * we return default AppSettings
+     * 
+     * @returns AppSettings
+     */
+    private async loadAppSettings(): Promise<AppSettings> {
+        if (fs.existsSync(this.appSettingsFilename)) {
+            const contents = await fsa.readFile(this.appSettingsFilename, 'utf8');
+            const appSettings = JSON.parse(contents);
+            return appSettings;
+        }
+
+        return {
+            acidCamPath: `${__dirname}/acidcam`,
+            capturePath: `${__dirname}/acidcam/capture`
+        };
+    }
+
+    /**
      * Toggles between maximized and windowed
      */
     private maximize() {
@@ -51,7 +85,7 @@ class Program {
             this.win.unmaximize();
         else
             this.win.maximize();
-        
+
         this.isMaximized = !this.isMaximized;
     }
 
@@ -63,6 +97,30 @@ class Program {
     }
 
     /**
+     * Saves our AppSettings to ./.appsettings
+     * 
+     * @param appSettings The appsettings to save
+     */
+    private async saveAppSettings(appSettings: AppSettings) {
+        const contents = JSON.stringify(appSettings);
+        await fsa.writeFile(this.appSettingsFilename, contents, "utf8");
+    }
+
+    /**
+     * Allows the UI thread to show the user a folder select dialog, returns the OpenDialogReturnValue
+     * 
+     * @param options [Optional] options for the dialog
+     * @returns The result of the dialog
+     */
+    private async selectFolder(options?: OpenDialogOptions): Promise<OpenDialogReturnValue> {
+        if (!options) options = { properties: ['openDirectory'] };
+        else options.properties = [...options.properties, 'openDirectory'];
+
+        const res = await dialog.showOpenDialog(this.win, options);
+        return res;
+    }
+
+    /**
      * Registers our window.app handlers
      */
     public registerHandlers() {
@@ -71,6 +129,10 @@ class Program {
         ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command.props));
         ipcMain.on('app/maximize', () => this.maximize());
         ipcMain.on('app/minimize', () => this.minimize());
+
+        ipcMain.handle('save/appsettings', async (_, command: AppSettings) => this.saveAppSettings(command));
+        ipcMain.handle('select/folder', async (_, command: OpenDialogOptions) => this.selectFolder(command));
+        ipcMain.handle('load/appsettings', async () => this.loadAppSettings());
     }
 
     /**
@@ -89,6 +151,8 @@ class Program {
                 preload: path.join(__dirname, 'preload.js')
             }
         });
+
+        this.win.webContents.openDevTools({ mode: 'detach' });
 
         // Scoping is weird, create an instance of me and use that to register handlers
         const program = new Program(this.win);

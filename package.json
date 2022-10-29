@@ -1,10 +1,10 @@
 {
   "name": "electric-acid-cam",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./dist && webpack --config ./webpack.config.js && npm run copy",
+    "build": "webpack --config ./webpack.config.js && npm run copy",
     "copy": "copyfiles -u 2 \"./src/ui/css/**/*.*\" \"./dist/\"",
     "start": "npm run build && electron dist/acid-cam.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,7 +14,7 @@
     "name": "Dan Mayor",
     "email": "dmayor@digivance.com"
   },
-  "contributes": [
+  "contributors": [
     {
       "name": "Jared Bruni",
       "email": ""

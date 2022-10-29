@@ -44,7 +44,7 @@ module.exports = [
 
     {
         mode: 'development',
-        entry: './src/app/preload.ts',
+        entry: './src/common/preload.ts',
         target: 'electron-renderer',
         devtool: 'source-map',
         module: {
