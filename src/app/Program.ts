@@ -2,6 +2,10 @@ import { app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, OpenDialogOpti
 import * as path from 'path';
 import * as fs from 'fs';
 import * as fsa from 'fs/promises';
+
+import AppLogger from '@digivance/applogger';
+import { ConsoleProvider, FileProvider, FileProviderRotationInterval } from '@digivance/applogger/providers';
+
 import AppApi from '../common/AppApi';
 import LaunchRequest from '../common/ipc/LaunchRequest';
 import AppSettings from '../common/AppSettings';
@@ -14,6 +18,32 @@ declare global {
         app: AppApi;
     }
 };
+
+/**
+ * Our logging path (creates it if not exists)
+ */
+const __logpath = path.join(__dirname, 'logs');
+if (!fs.existsSync(__logpath)) fs.mkdirSync(__logpath);
+
+/**
+ * The applogger we'll use
+ */
+const logger = new AppLogger([
+    /**
+     * Default console provider
+     */
+    new ConsoleProvider(),
+
+    /**
+     * File provider with daily rotation and saving to our logging path
+     */
+    new FileProvider({
+        filePath: __logpath,
+        rotationInterval: FileProviderRotationInterval.daily
+    })
+]);
+
+logger.logInfo('Electric Acid Cam starting up...');
 
 /**
  * This is our main entry point, the application with access to the host
@@ -45,7 +75,13 @@ class Program {
      * reactivate later (I dunno, it's MAC stuff)
      */
     private closeApp() {
-        if (process.platform !== 'darwin') app.quit();
+        logger.logInfo('Closing down boss');
+        if (process.platform !== 'darwin') {
+            app.quit();
+            logger.shutdown();
+        } else {
+            logger.flushLogsNow();
+        }
     }
 
     /**
@@ -54,8 +90,7 @@ class Program {
      * @param props The command line options to launch with
      */
     private launchAcidCam(props: string[]) {
-        console.log('Todo, launch with following props:');
-        console.log(props);
+        logger.logError('Launch Acid cam request from UI but I don\'t know how to do it yet');
     }
 
     /**
@@ -65,26 +100,33 @@ class Program {
      * @returns AppSettings
      */
     private async loadAppSettings(): Promise<AppSettings> {
+        logger.logTrace('Loading app settings requested from UI');
+
         if (fs.existsSync(this.appSettingsFilename)) {
             const contents = await fsa.readFile(this.appSettingsFilename, 'utf8');
             const appSettings = JSON.parse(contents);
+            logger.logTrace('App settings loaded', appSettings);
             return appSettings;
         }
 
-        return {
+        const appSettings = {
             acidCamPath: `${__dirname}/acidcam`,
             capturePath: `${__dirname}/acidcam/capture`
         };
+
+        logger.logTrace('Returning default app settings', appSettings);
+        return appSettings;
     }
 
     /**
      * Toggles between maximized and windowed
      */
     private maximize() {
-        if (this.isMaximized)
+        if (this.isMaximized) {
             this.win.unmaximize();
-        else
+        } else {
             this.win.maximize();
+        }
 
         this.isMaximized = !this.isMaximized;
     }
@@ -102,8 +144,15 @@ class Program {
      * @param appSettings The appsettings to save
      */
     private async saveAppSettings(appSettings: AppSettings) {
-        const contents = JSON.stringify(appSettings);
-        await fsa.writeFile(this.appSettingsFilename, contents, "utf8");
+        logger.logDebug('Saving appsettings:', appSettings);
+
+        try {
+            const contents = JSON.stringify(appSettings);
+            await fsa.writeFile(this.appSettingsFilename, contents, "utf8");
+        } catch (err) {
+            logger.logError('Failed to save app settings', err);
+            throw err;
+        }
     }
 
     /**
@@ -116,14 +165,21 @@ class Program {
         if (!options) options = { properties: ['openDirectory'] };
         else options.properties = [...options.properties, 'openDirectory'];
 
-        const res = await dialog.showOpenDialog(this.win, options);
-        return res;
+        try {
+            const res = await dialog.showOpenDialog(this.win, options);
+            return res;
+        } catch (err) {
+            logger.logError('Failed to select folder', err);
+            throw err;
+        }
     }
 
     /**
      * Registers our window.app handlers
      */
     public registerHandlers() {
+        logger.logInfo('Registering IPC handlers');
+
         app.on('window-all-closed', program.closeApp);
 
         ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command.props));
@@ -140,6 +196,8 @@ class Program {
      * loads the UI renderer content.
      */
     public main() {
+        logger.logInfo('Main application loading...');
+
         this.win = new BrowserWindow({
             width: 1200,
             height: 900,
@@ -152,12 +210,13 @@ class Program {
             }
         });
 
-        this.win.webContents.openDevTools({ mode: 'detach' });
+        //this.win.webContents.openDevTools({ mode: 'detach' });
 
         // Scoping is weird, create an instance of me and use that to register handlers
         const program = new Program(this.win);
         program.registerHandlers();
 
+        logger.logInfo('Rendering UI');
         this.win.loadFile('index.html');
     }
 }
