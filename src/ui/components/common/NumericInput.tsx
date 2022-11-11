@@ -4,6 +4,7 @@ export interface NumericInputProps {
     className?: string;
     error?: string;
     label: React.ReactNode | string;
+    name?: string;
     onChange: (e: React.FormEvent<HTMLInputElement>) => void;
     value?: number
 }
@@ -14,9 +15,10 @@ const NumericInput: React.FC<NumericInputProps> = (props: NumericInputProps) => 
 
         <input
             className="form-control"
+            name={props.name}
+            onChange={props.onChange}
             type="number"
             value={props.value}
-            onChange={props.onChange}
         />
 
         <div className="text-danger">{props.error ?? <>&nbsp;</>}</div>

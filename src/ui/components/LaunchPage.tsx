@@ -21,114 +21,38 @@ const LaunchPage: React.FC = () => {
         window.app.launchAcidCam(state);
     }, []);
 
-    const onCanResizeChange = React.useCallback(async () => {
+    const onBooleanChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
+        const currentValue = state[e.currentTarget.name] as boolean;
+
         setState({
             ...state,
-            canResize: !state.canResize
+            [e.currentTarget.name]: !currentValue
         });
     }, [state, setState]);
 
-    const onDeviceIndexChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
+    const onNumberChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
         setState({
             ...state,
-            deviceIndex: Number.parseInt(e.currentTarget.value)
+            [e.currentTarget.name]: Number.parseInt(e.currentTarget.value)
         });
     }, [state, setState]);
 
-    const onDeviceResolutionChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
+    const onStringChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
         setState({
             ...state,
-            deviceResolution: e.currentTarget.value
+            [e.currentTarget.name]: e.currentTarget.value
         });
     }, [state, setState]);
 
-    const onFilterIndexChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            filterIndex: Number.parseInt(e.currentTarget.value)
-        });
-    }, [state, setState]);
-
-    const onInputModeChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            inputMode: e.currentTarget.value as 'capture' | 'file'
-        });
-    }, [state, setState]);
-
-    const onIsFullscreenChange = React.useCallback(async () => {
-        setState({
-            ...state,
-            isFullscreen: !state.isFullscreen
-        });
-    }, [state, setState]);
-
-    const onOutputFpsChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            outputFps: Number.parseInt(e.currentTarget.value)
-        });
-    }, [state, setState]);
-
-    const onOutputMonitorChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            outputMonitor: Number.parseInt(e.currentTarget.value)
-        });
-    }, [state, setState]);
-
-    const onShaderIndexChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            shaderIndex: Number.parseInt(e.currentTarget.value)
-        });
-    }, [state, setState]);
-
-    const onShaderPathChange = React.useCallback(async () => {
+    const onPathChange = React.useCallback(async (name: string) => {
         const res = await window.app.selectFolder();
 
         if (!res.canceled) {
             setState({
                 ...state,
-                shaderPath: res.filePaths[0]
+                [name]: res.filePaths[0]
             });
         }
-    }, [state, setState]);
-
-    const onStartAtIndexChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            startAtIndex: Number.parseInt(e.currentTarget.value)
-        });
-    }, [state, setState]);
-
-    /**
-     * Launches an OS folder picker dialog and sets the selected value
-     * into the state.capturePath (which is rendered on the screen)
-     */
-    const onVideoFilenameChange = React.useCallback(async () => {
-        const res = await window.app.selectFolder();
-
-        if (!res.canceled) {
-            setState({
-                ...state,
-                videoFilename: res.filePaths[0]
-            });
-        }
-    }, [state, setState]);
-
-    const onVideoFileRepeatChange = React.useCallback(async () => {
-        setState({
-            ...state,
-            videoFileRepeat: !state.videoFileRepeat
-        });
-    }, [state, setState]);
-
-    const onWindowResolutionChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setState({
-            ...state,
-            windowResolution: e.currentTarget.value
-        });
     }, [state, setState]);
 
     return <>
@@ -151,7 +75,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={4}>
                             <SelectInput
                                 label="Mode:"
-                                onChange={onInputModeChange}
+                                name="inputMode"
+                                onChange={onStringChange}
                                 options={[ // TODO: use IPC to get available capture devices?
                                     { label: 'Capture', value: 'capture' },
                                     { label: 'Video File', value: 'file' }
@@ -163,7 +88,7 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={4}>
                             {state.inputMode === 'capture' && <SelectInput
                                 label="Device Index:"
-                                onChange={onDeviceIndexChange}
+                                onChange={onNumberChange}
                                 options={[ // TODO: use IPC to get available capture devices?
                                     { label: '0', value: 0 },
                                     { label: '1', value: 1 },
@@ -175,7 +100,8 @@ const LaunchPage: React.FC = () => {
 
                             {state.inputMode === 'file' && <FolderSelectInput
                                 label="Video Filename:"
-                                onClick={onVideoFilenameChange}
+                                name="videoFilename"
+                                onClick={onPathChange}
                                 value={state.videoFilename}
                             />}
                         </Col>
@@ -183,7 +109,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={4}>
                             {state.inputMode === 'capture' && <SelectInput
                                 label="Resolution:"
-                                onChange={onDeviceResolutionChange}
+                                name="deviceResolution"
+                                onChange={onStringChange}
                                 options={[ // TODO: use IPC to get available capture devices?
                                     { label: '800x600', value: '800x600' },
                                     { label: '1024x768', value: '1024x768' }
@@ -194,7 +121,7 @@ const LaunchPage: React.FC = () => {
                             {state.inputMode === 'file' && <SwitchInput
                                 label="Repeat:"
                                 name="videoFileRepeat"
-                                onChange={onVideoFileRepeatChange}
+                                onChange={onBooleanChange}
                                 value={state.videoFileRepeat}
                             />}
                         </Col>
@@ -212,7 +139,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={4}>
                             <FolderSelectInput
                                 label="Shader path:"
-                                onClick={onShaderPathChange}
+                                name="shaderPath"
+                                onClick={onPathChange}
                                 value={state.shaderPath}
                             />
                         </Col>
@@ -220,7 +148,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={2}>
                             <NumericInput
                                 label="Shader index:"
-                                onChange={onShaderIndexChange}
+                                name="shaderIndex"
+                                onChange={onNumberChange}
                                 value={state.shaderIndex}
                             />
                         </Col>
@@ -228,7 +157,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={2}>
                             <NumericInput
                                 label="Filter index:"
-                                onChange={onFilterIndexChange}
+                                name="filterIndex"
+                                onChange={onNumberChange}
                                 value={state.filterIndex}
                             />
                         </Col>
@@ -236,7 +166,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={2}>
                             <NumericInput
                                 label="Start at index:"
-                                onChange={onStartAtIndexChange}
+                                name="startAtIndex"
+                                onChange={onNumberChange}
                                 value={state.startAtIndex}
                             />
                         </Col>
@@ -254,7 +185,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={4}>
                             <SelectInput
                                 label="Window resolution:"
-                                onChange={onWindowResolutionChange}
+                                name="windowResolution"
+                                onChange={onStringChange}
                                 options={[ // TODO: use IPC to get available capture devices?
                                     { label: '800x600', value: '800x600' },
                                     { label: '1024x768', value: '1024x768' }
@@ -267,7 +199,7 @@ const LaunchPage: React.FC = () => {
                             <SwitchInput
                                 label="Full screen:"
                                 name="isFullScreen"
-                                onChange={onIsFullscreenChange}
+                                onChange={onBooleanChange}
                                 value={state.isFullscreen}
                             />
                         </Col>
@@ -276,7 +208,7 @@ const LaunchPage: React.FC = () => {
                             <SwitchInput
                                 label="Can Resize:"
                                 name="canResize"
-                                onChange={onCanResizeChange}
+                                onChange={onBooleanChange}
                                 value={state.canResize}
                             />
                         </Col>
@@ -284,10 +216,11 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={2}>
                             <SelectInput
                                 label="Monitor:"
-                                onChange={onOutputMonitorChange}
+                                name="outputMonitor"
+                                onChange={onNumberChange}
                                 options={[ // TODO: use IPC to get available capture devices?
-                                    { label: '0', value: '0' },
-                                    { label: '1', value: '1' }
+                                    { label: '0', value: 0 },
+                                    { label: '1', value: 1 }
                                 ]}
                                 value={state.outputMonitor}
                             />
@@ -296,7 +229,8 @@ const LaunchPage: React.FC = () => {
                         <Col xs={12} sm={2}>
                             <NumericInput
                                 label="FPS"
-                                onChange={onOutputFpsChange}
+                                name="outputFps"
+                                onChange={onNumberChange}
                                 value={state.outputFps}
                             />
                         </Col>

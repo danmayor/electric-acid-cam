@@ -23,8 +23,8 @@ interface SettingsPageState extends AppSettings {
 const initialSettingsPageState: SettingsPageState = {
     acidCamPath: '',
     capturePath: '',
+    logPath: '',
     logLevel: LogLevel.info,
-    logPath: ''
 }
 
 /**
@@ -39,71 +39,40 @@ const SettingsPage: React.FC = () => {
      * from ./.appsettings file, or will load up the defaults
      */
     React.useEffect(() => {
-        setState({ ...state, isLoading: true });
-
         const getAppSettings = async () => {
             const appSettings = await window.app.getAppSettings();
-            setState(appSettings);
+            setState({
+                ...state,
+                ...appSettings,
+                successText: undefined // no clue why we have to force this here
+            });
         }
 
         getAppSettings();
     }, []);
-
+    
     /**
-     * Launches an OS folder picker dialog and sets the selected value
-     * into the state.acidCamPath (which is rendered on the screen)
+     * Handles numeric state value changes
      */
-    const onAcidCamPathClick = React.useCallback(async () => {
-        const res = await window.app.selectFolder();
-
-        if (!res.canceled) {
-            setState({
-                ...state,
-                acidCamPath: res.filePaths[0]
-            });
-        }
-    }, [state, setState]);
-
-    /**
-     * Launches an OS folder picker dialog and sets the selected value
-     * into the state.capturePath (which is rendered on the screen)
-     */
-    const onCapturePathClick = React.useCallback(async () => {
-        const res = await window.app.selectFolder();
-
-        if (!res.canceled) {
-            setState({
-                ...state,
-                capturePath: res.filePaths[0]
-            });
-        }
-    }, [state, setState]);
-
-    /**
-     * Launches an OS folder picker dialog and sets the selected value
-     * into the state.logPath (which is rendered on the screen)
-     */
-    const onLogPathClick = React.useCallback(async () => {
-        const res = await window.app.selectFolder();
-
-        if (!res.canceled) {
-            setState({
-                ...state,
-                capturePath: res.filePaths[0]
-            });
-        }
-    }, [state, setState]);
-
-    /**
-     * Handles the Log Level input changes
-     */
-    const onLogLevelChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        const logLevel = Number.parseInt(e.currentTarget.value);
-
+    const onNumberChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
         setState({
             ...state,
-            logLevel
+            [e.currentTarget.name]: Number.parseInt(e.currentTarget.value)
         });
+    }, [state, setState]);
+
+    /**
+     * Displays the OS folder picker and sets selection to state
+     */
+    const onPathChange = React.useCallback(async (name: string) => {
+        const res = await window.app.selectFolder();
+
+        if (!res.canceled) {
+            setState({
+                ...state,
+                [name]: res.filePaths[0]
+            });
+        }
     }, [state, setState]);
 
     /**
@@ -164,7 +133,7 @@ const SettingsPage: React.FC = () => {
                                 className="mb-2"
                                 label="AcidCam path:"
                                 name="acidCamPath"
-                                onClick={onAcidCamPathClick}
+                                onClick={onPathChange}
                                 value={state.acidCamPath}
                             />
                         </Col>
@@ -174,7 +143,7 @@ const SettingsPage: React.FC = () => {
                                 className="mb-2"
                                 label="Capture path:"
                                 name="capturePath"
-                                onClick={onCapturePathClick}
+                                onClick={onPathChange}
                                 value={state.capturePath}
                             />
                         </Col>
@@ -195,7 +164,7 @@ const SettingsPage: React.FC = () => {
                                 className="mb-2"
                                 label="Log Path:"
                                 name="logPath"
-                                onClick={onLogPathClick}
+                                onClick={onPathChange}
                                 value={state.logPath}
                             />
                         </Col>
@@ -204,7 +173,7 @@ const SettingsPage: React.FC = () => {
                             <SelectInput
                                 label="Log Level"
                                 name="logLevel"
-                                onChange={onLogLevelChange}
+                                onChange={onNumberChange}
                                 options={[
                                     { label: 'Trace', value: 0 },
                                     { label: 'Debug', value: 1 },

@@ -4,7 +4,7 @@ import { FormGroup } from 'reactstrap';
 export interface SwitchInputProps {
     label: string;
     name: string;
-    onChange: () => void;
+    onChange: (e: React.FormEvent<HTMLInputElement>) => void;
     value: boolean;
 };
 
