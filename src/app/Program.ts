@@ -102,7 +102,7 @@ class Program {
      * 
      * @param props The command line options to launch with
      */
-    private launchAcidCam(props: string[]) {
+    private launchAcidCam(command: LaunchRequest) {
         this.logger.logError('Launch Acid cam request from UI but I don\'t know how to do it yet');
     }
 
@@ -225,7 +225,7 @@ class Program {
 
         app.on('window-all-closed', this.closeApp);
 
-        ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command.props));
+        ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command));
         ipcMain.on('app/maximize', () => this.maximize());
         ipcMain.on('app/minimize', () => this.minimize());
 

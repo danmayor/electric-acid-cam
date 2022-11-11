@@ -154,7 +154,7 @@ const SettingsPage: React.FC = () => {
         <form onSubmit={onSaveClick}>
             <Card>
                 <CardHeader>
-                    <h2>Application Settings</h2>
+                    <h3>Application Settings</h3>
                 </CardHeader>
 
                 <CardBody>
@@ -163,6 +163,7 @@ const SettingsPage: React.FC = () => {
                             <FolderSelectInput
                                 className="mb-2"
                                 label="AcidCam path:"
+                                name="acidCamPath"
                                 onClick={onAcidCamPathClick}
                                 value={state.acidCamPath}
                             />
@@ -172,6 +173,7 @@ const SettingsPage: React.FC = () => {
                             <FolderSelectInput
                                 className="mb-2"
                                 label="Capture path:"
+                                name="capturePath"
                                 onClick={onCapturePathClick}
                                 value={state.capturePath}
                             />
@@ -183,7 +185,7 @@ const SettingsPage: React.FC = () => {
 
             <Card className="mt-5">
                 <CardHeader>
-                    <h2>Log Settings:</h2>
+                    <h3>Log Settings:</h3>
                 </CardHeader>
 
                 <CardBody>
@@ -192,6 +194,7 @@ const SettingsPage: React.FC = () => {
                             <FolderSelectInput
                                 className="mb-2"
                                 label="Log Path:"
+                                name="logPath"
                                 onClick={onLogPathClick}
                                 value={state.logPath}
                             />
@@ -200,6 +203,7 @@ const SettingsPage: React.FC = () => {
                         <Col xs={12} sm={6}>
                             <SelectInput
                                 label="Log Level"
+                                name="logLevel"
                                 onChange={onLogLevelChange}
                                 options={[
                                     { label: 'Trace', value: 0 },

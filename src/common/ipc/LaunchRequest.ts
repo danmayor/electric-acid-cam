@@ -3,14 +3,29 @@
  * Program (App) when requesting that we launch acid cam.
  */
 export default interface LaunchRequest {
-    /**
-     * If provided this is the full path to the acid cam executable
-     * (including acidcam.exe)
-     */
-    path: string;
+    canResize?: boolean;
+    deviceIndex?: number;
+    deviceResolution?: string;
+    filterIndex?: number;
+    inputMode: "capture" | "file";
+    isFullscreen?: boolean;
+    outputFps?: number;
+    outputMonitor?: number;
+    shaderIndex?: number;
+    shaderPath?: string;
+    startAtIndex?: number;
+    videoFilename?: string;
+    videoFileRepeat?: boolean;
+    windowResolution?: string;
+}
 
-    /**
-     * Array of the properties selected within the UI to launch acid cam with
-     */
-    props: string[];
+/**
+ * Default launch request
+ */
+export const DefaultLaunchRequest: LaunchRequest = {
+    deviceIndex: 0,
+    deviceResolution: '800x600',
+    inputMode: "capture",
+    outputFps: 60,
+    windowResolution: '800x600'
 }

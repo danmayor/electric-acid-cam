@@ -1,4 +1,6 @@
-html, body, #appContainer {
+html,
+body,
+#appContainer {
     height: 100%;
     min-height: 100%;
     font-size: .9rem;
@@ -48,4 +50,50 @@ html, body, #appContainer {
     right: 0;
     margin-right: .2rem;
     cursor: pointer;
+}
+
+.react-switch-checkbox {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.react-switch-label {
+    align-items: center;
+    background: grey;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    height: 25px;
+    justify-content: space-between;
+    position: relative;
+    transition: background-color 0.2s;
+    top: -15px;
+    width: 50px;
+}
+
+.react-switch-label .react-switch-button {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+    transition: 0.1s;
+    background: var(--bs-gray-200);
+    box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+}
+
+.react-switch-checkbox:checked+.react-switch-label .react-switch-button {
+    left: calc(100%);
+    transform: translateX(-100%);
+}
+
+.react-switch-checkbox:checked+.react-switch-label {
+    background: var(--bs-green);
+}
+
+.react-switch-label:active .react-switch-button {
+    width: 30px;
 }

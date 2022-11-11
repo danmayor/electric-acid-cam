@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { FaFolder } from 'react-icons/fa';
 import { FormGroup, Input } from 'reactstrap';
 
 export interface SelectInputOption {
@@ -11,24 +10,28 @@ export interface SelectInputProps {
     className?: string;
     error?: string;
     label: React.ReactNode | string;
+    name?: string;
     onChange: (e: React.FormEvent<HTMLInputElement>) => void;
     options: SelectInputOption[];
     value?: any;
 }
 
-// Todo:
-//  need to implement a modal that interacts with app via IPC to make a folder picker
+/**
+ * A simple combo box select input
+ * 
+ * @param props SelectInputProps
+ * @returns SelectInput component
+ */
 const SelectInput: React.FC<SelectInputProps> = (props: SelectInputProps) => {
-    console.log(props.value);
-
     return <FormGroup className={props.className}>
         <label className="input-label">{props.label}</label>
+
         <Input
-            type="select"
+            name={props.name}
             onChange={props.onChange}
+            type="select"
         >
             {props.options.map(opt => {
-                console.log(`Comparing '${props.value}' to '${opt.value}'`);
                 return <option value={opt.value} selected={props.value == opt.value}>{opt.label}</option>;
             })}
         </Input>

@@ -1,20 +1,20 @@
 import * as React from 'react';
 
-export interface TextInputProps {
+export interface NumericInputProps {
     className?: string;
     error?: string;
     label: React.ReactNode | string;
     onChange: (e: React.FormEvent<HTMLInputElement>) => void;
-    value?: string;
+    value?: number
 }
 
-const TextInput: React.FC<TextInputProps> = (props: TextInputProps) => {
+const NumericInput: React.FC<NumericInputProps> = (props: NumericInputProps) => {
     return <div className={props.className}>
         <label className="input-label">{props.label}</label>
 
         <input
             className="form-control"
-            type="text"
+            type="number"
             value={props.value}
             onChange={props.onChange}
         />
@@ -23,4 +23,4 @@ const TextInput: React.FC<TextInputProps> = (props: TextInputProps) => {
     </div>
 };
 
-export default TextInput;
+export default NumericInput;
