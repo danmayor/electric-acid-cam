@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config ./webpack.config.js && npm run copy",
     "copy": "copyfiles -u 2 \"./src/ui/css/**/*.*\" \"./dist/\"",
-    "start": "npm run build && electron dist/acid-cam.js -w",
+    "start": "npm run build && electron dist/acid-cam.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

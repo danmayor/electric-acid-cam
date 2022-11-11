@@ -33,7 +33,6 @@ const initialSettingsPageState: SettingsPageState = {
  */
 const SettingsPage: React.FC = () => {
     const [state, setState] = React.useState(initialSettingsPageState);
-    const [toastVisible, setToastVisible] = React.useState(true);
 
     /**
      * This will run when we first enter the Settings page, it loads our AppSettings
@@ -141,7 +140,7 @@ const SettingsPage: React.FC = () => {
                 successText: undefined
             });
         }, 1500);
-    }, [state]);
+    }, [state, setState]);
 
     return <>
         <PageHeader
