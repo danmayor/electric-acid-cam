@@ -8,14 +8,14 @@ import LaunchRequest from "./ipc/LaunchRequest";
  */
 export default interface AppApi {
     /**
+     * Defined in Program.getAppSettings
+     */
+    getAppSettings: () => Promise<AppSettings>;
+
+    /**
      * Defined in Program.launchAcidCam
      */
     launchAcidCam: (launchRequest: LaunchRequest) => void;
-
-    /**
-     * Defined in Program.loadAppSettings
-     */
-    loadAppSettings: () => Promise<AppSettings>;
 
     /**
      * Defined in Program.maximize

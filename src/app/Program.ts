@@ -9,6 +9,7 @@ import { ConsoleProvider, FileProvider, FileProviderRotationInterval } from '@di
 import AppApi from '../common/AppApi';
 import LaunchRequest from '../common/ipc/LaunchRequest';
 import AppSettings from '../common/AppSettings';
+import { LogLevel } from '@digivance/applogger/applogger';
 
 /**
  * Adds our window.electronAPI property to global definitions
@@ -20,40 +21,19 @@ declare global {
 };
 
 /**
- * Our logging path (creates it if not exists)
- */
-const __logpath = path.join(__dirname, 'logs');
-if (!fs.existsSync(__logpath)) fs.mkdirSync(__logpath);
-
-/**
- * The applogger we'll use
- */
-const logger = new AppLogger([
-    /**
-     * Default console provider
-     */
-    new ConsoleProvider(),
-
-    /**
-     * File provider with daily rotation and saving to our logging path
-     */
-    new FileProvider({
-        filePath: __logpath,
-        rotationInterval: FileProviderRotationInterval.daily
-    })
-]);
-
-logger.logInfo('Electric Acid Cam starting up...');
-
-/**
  * This is our main entry point, the application with access to the host
  * machine (including file system and ability to execute processes)
  */
 class Program {
     /**
+     * Current appsettings for this instance
+     */
+    private appSettings: AppSettings;
+
+    /**
      * Path to the file where we store app settings
      */
-    private appSettingsFilename = `${__dirname}/.appsettings`;
+    private appSettingsFilename: string = `${__dirname}/.appsettings`;
 
     /**
      * Tells us if the window is maximized now or not
@@ -61,12 +41,37 @@ class Program {
     private isMaximized: boolean = false;
 
     /**
+     * @digivance/applogger that we are using for this program instance
+     */
+    private logger: AppLogger;
+
+    /**
      * Reference to the browser window we created
      */
     private win: BrowserWindow;
 
-    constructor(win?: BrowserWindow) {
-        this.win = win;
+    constructor() {
+    }
+
+    /**
+     * Creates this.logger from current appsettings.
+     */
+    private createLogger() {
+        this.logger = new AppLogger([
+            /**
+             * Default console provider
+             */
+            new ConsoleProvider({ minLogLevel: this.appSettings.logLevel }),
+
+            /**
+             * File provider with daily rotation and saving to our logging path
+             */
+            new FileProvider({
+                filePath: this.appSettings.logPath,
+                minLogLevel: this.appSettings.logLevel,
+                rotationInterval: FileProviderRotationInterval.daily
+            })
+        ]);
     }
 
     /**
@@ -75,13 +80,21 @@ class Program {
      * reactivate later (I dunno, it's MAC stuff)
      */
     private closeApp() {
-        logger.logInfo('Closing down boss');
         if (process.platform !== 'darwin') {
+            this.logger?.shutdown();
             app.quit();
-            logger.shutdown();
         } else {
-            logger.flushLogsNow();
+            this.logger?.flushLogsNow();
         }
+    }
+
+    /**
+     * Returns the current appsettings
+     * 
+     * @returns this.appSettings
+     */
+    private getAppSettings(): AppSettings {
+        return this.appSettings;
     }
 
     /**
@@ -90,32 +103,7 @@ class Program {
      * @param props The command line options to launch with
      */
     private launchAcidCam(props: string[]) {
-        logger.logError('Launch Acid cam request from UI but I don\'t know how to do it yet');
-    }
-
-    /**
-     * Attempts to load AppSettings from __dirname/.appsettings, if not found
-     * we return default AppSettings
-     * 
-     * @returns AppSettings
-     */
-    private async loadAppSettings(): Promise<AppSettings> {
-        logger.logTrace('Loading app settings requested from UI');
-
-        if (fs.existsSync(this.appSettingsFilename)) {
-            const contents = await fsa.readFile(this.appSettingsFilename, 'utf8');
-            const appSettings = JSON.parse(contents);
-            logger.logTrace('App settings loaded', appSettings);
-            return appSettings;
-        }
-
-        const appSettings = {
-            acidCamPath: `${__dirname}/acidcam`,
-            capturePath: `${__dirname}/acidcam/capture`
-        };
-
-        logger.logTrace('Returning default app settings', appSettings);
-        return appSettings;
+        this.logger.logError('Launch Acid cam request from UI but I don\'t know how to do it yet');
     }
 
     /**
@@ -144,13 +132,16 @@ class Program {
      * @param appSettings The appsettings to save
      */
     private async saveAppSettings(appSettings: AppSettings) {
-        logger.logDebug('Saving appsettings:', appSettings);
+        this.logger.logDebug('Saving appsettings:', appSettings);
 
         try {
             const contents = JSON.stringify(appSettings);
             await fsa.writeFile(this.appSettingsFilename, contents, "utf8");
+
+            this.appSettings = appSettings;
+            this.createLogger();
         } catch (err) {
-            logger.logError('Failed to save app settings', err);
+            this.logger.logError('Failed to save app settings', err);
             throw err;
         }
     }
@@ -169,36 +160,41 @@ class Program {
             const res = await dialog.showOpenDialog(this.win, options);
             return res;
         } catch (err) {
-            logger.logError('Failed to select folder', err);
+            this.logger.logError('Failed to select folder', err);
             throw err;
         }
     }
 
     /**
-     * Registers our window.app handlers
+     * Attempts to load AppSettings from __dirname/.appsettings, if not found
+     * we return default AppSettings
+     * 
+     * @returns AppSettings
      */
-    public registerHandlers() {
-        logger.logInfo('Registering IPC handlers');
+    public async loadAppSettings() {
+        if (fs.existsSync(this.appSettingsFilename)) {
+            const contents = await fsa.readFile(this.appSettingsFilename, 'utf8');
+            this.appSettings = JSON.parse(contents);
 
-        app.on('window-all-closed', program.closeApp);
-
-        ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command.props));
-        ipcMain.on('app/maximize', () => this.maximize());
-        ipcMain.on('app/minimize', () => this.minimize());
-
-        ipcMain.handle('save/appsettings', async (_, command: AppSettings) => this.saveAppSettings(command));
-        ipcMain.handle('select/folder', async (_, command: OpenDialogOptions) => this.selectFolder(command));
-        ipcMain.handle('load/appsettings', async () => this.loadAppSettings());
+            this.appSettings.logPath = this.appSettings.logPath ?? path.join(__dirname, 'logs');
+            this.appSettings.logLevel = this.appSettings.logLevel ?? LogLevel.info;
+        } else {
+            this.appSettings = {
+                acidCamPath: path.join(__dirname, 'acidcam'),
+                capturePath: path.join(__dirname, 'acidcam', 'capture'),
+                logLevel: LogLevel.info,
+                logPath: path.join(__dirname, 'logs')
+            };
+        }
     }
 
     /**
      * Main entry point, creates our browser window, registers handlers and
      * loads the UI renderer content.
      */
-    public main() {
-        logger.logInfo('Main application loading...');
-
-        this.win = new BrowserWindow({
+    public static async main() {
+        const program = new Program();
+        program.win = new BrowserWindow({
             width: 1200,
             height: 900,
             center: true,
@@ -210,22 +206,39 @@ class Program {
             }
         });
 
-        //this.win.webContents.openDevTools({ mode: 'detach' });
+        await program.loadAppSettings();
+        await program.createLogger();
 
-        // Scoping is weird, create an instance of me and use that to register handlers
-        const program = new Program(this.win);
         program.registerHandlers();
 
-        logger.logInfo('Rendering UI');
-        this.win.loadFile('index.html');
+        program.logger.logInfo('Rendering UI');
+        program.win.loadFile('index.html');
+
+        //program.win.webContents.openDevTools({ mode: 'detach' });
+    }
+
+    /**
+     * Registers our window.app handlers
+     */
+    public registerHandlers() {
+        this.logger.logInfo('Registering IPC handlers');
+
+        app.on('window-all-closed', this.closeApp);
+
+        ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command.props));
+        ipcMain.on('app/maximize', () => this.maximize());
+        ipcMain.on('app/minimize', () => this.minimize());
+
+        ipcMain.handle('get/appsettings', async () => this.getAppSettings());
+        ipcMain.handle('save/appsettings', async (_, command: AppSettings) => this.saveAppSettings(command));
+        ipcMain.handle('select/folder', async (_, command: OpenDialogOptions) => this.selectFolder(command));
     }
 }
 
 /**
  * Creates our app window
  */
-const program = new Program();
-app.on('ready', program.main)
+app.on('ready', Program.main)
 
 // This is that MAC re-activate request thing I guess
-app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) program.main(); });
+app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) Program.main(); });

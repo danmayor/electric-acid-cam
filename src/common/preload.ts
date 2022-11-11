@@ -5,12 +5,12 @@ import LaunchRequest from "./ipc/LaunchRequest";
 // Link our AppApi methods so the UI can send the request to the App
 // These are the ipc channels for ./AppApi.ts
 contextBridge.exposeInMainWorld('app', {
-    launchAcidCam: (launchRequest: LaunchRequest) => {
-        ipcRenderer.send('app/launch', launchRequest)
+    getAppSettings: async (): Promise<AppSettings> => {
+        return await ipcRenderer.invoke('get/appsettings');
     },
 
-    loadAppSettings: async (): Promise<AppSettings> => {
-        return await ipcRenderer.invoke('load/appsettings');
+    launchAcidCam: (launchRequest: LaunchRequest) => {
+        ipcRenderer.send('app/launch', launchRequest)
     },
 
     maximize: () => {
