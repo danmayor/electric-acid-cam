@@ -7,7 +7,7 @@ import AppLogger from '@digivance/applogger';
 import { ConsoleProvider, FileProvider, FileProviderRotationInterval } from '@digivance/applogger/providers';
 
 import AppApi from '../common/AppApi';
-import LaunchRequest from '../common/ipc/LaunchRequest';
+import LaunchRequest, { buildLaunchString } from '../common/ipc/LaunchRequest';
 import AppSettings from '../common/AppSettings';
 import { LogLevel } from '@digivance/applogger/applogger';
 
@@ -103,7 +103,12 @@ class Program {
      * @param props The command line options to launch with
      */
     private launchAcidCam(command: LaunchRequest) {
-        this.logger.logError('Launch Acid cam request from UI but I don\'t know how to do it yet');
+        const options = buildLaunchString(command);
+
+        this.logger.logDebug('Received launch command', command);
+        this.logger.logDebug('Built option parameters', options);
+
+        // Call exec here
     }
 
     /**

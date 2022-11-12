@@ -38,3 +38,11 @@ export const DefaultLaunchRequest: LaunchRequest = {
     outputFps: 60,
     windowResolution: '800x600'
 }
+
+/**
+ * Builds the command line string to launch acid cam based on provided
+ * LaunchRequest
+ */
+export const buildLaunchString = (command: LaunchRequest): string => {
+    return `-P -g -p "${command.shaderPath}" -d 0 -e "${command.outputFolder}" `;
+}
