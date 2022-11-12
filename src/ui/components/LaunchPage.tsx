@@ -172,6 +172,64 @@ const LaunchPage: React.FC = () => {
                             />
                         </Col>
                     </Row>
+
+                    <Row>
+                        <Col cs={12} sm={4}>
+                            <FolderSelectInput
+                                label="Material:"
+                                name="shaderMaterial"
+                                onClick={onPathChange}
+                                value={state.shaderMaterial}
+                            />
+                        </Col>
+
+                        <Col cs={12} sm={4}>
+                            <FolderSelectInput
+                                label="Playlist:"
+                                name="shaderPlaylist"
+                                onClick={onPathChange}
+                                value={state.shaderPlaylist}
+                            />
+                        </Col>
+
+                        <Col cs={12} sm={4}>
+                            <FolderSelectInput
+                                label="Auto filter:"
+                                name="shaderAutoFilter"
+                                onClick={onPathChange}
+                                value={state.shaderAutoFilter}
+                            />
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col xs={12} sm={2}>
+                            <SwitchInput
+                                label="Enable playback:"
+                                name="enablePlayback"
+                                onChange={onBooleanChange}
+                                value={state.enablePlayback}
+                            />
+                        </Col>
+
+                        <Col xs={12} sm={2}>
+                            <NumericInput
+                                label="Beats per minute:"
+                                name="beatsPerMinute"
+                                onChange={onNumberChange}
+                                value={state.beatsPerMinute}
+                            />
+                        </Col>
+
+                        <Col xs={12} sm={2}>
+                            <SwitchInput
+                                label="Platlist shuffle:"
+                                name="playlistShuffle"
+                                onChange={onBooleanChange}
+                                value={state.playlistShuffle}
+                            />
+                        </Col>
+                    </Row>
                 </CardBody>
             </Card>
 
@@ -232,6 +290,39 @@ const LaunchPage: React.FC = () => {
                                 name="outputFps"
                                 onChange={onNumberChange}
                                 value={state.outputFps}
+                            />
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col xs={12} sm={4}>
+                            <FolderSelectInput
+                                label="Output folder:"
+                                name="outputFolder"
+                                onClick={onPathChange}
+                                value={state.outputFolder}
+                            />
+                        </Col>
+
+                        <Col xs={12} sm={4}>
+                            <SelectInput
+                                label="Record at:"
+                                name="outputAt"
+                                onChange={onStringChange}
+                                options={[ // TODO: use IPC to get available capture devices?
+                                    { label: 'x264', value: 'x264' },
+                                    { label: 'x265', value: 'x265' }
+                                ]}
+                                value={state.outputAt}
+                            />
+                        </Col>
+
+                        <Col xs={12} sm={2}>
+                            <NumericInput
+                                label="CRF"
+                                name="outputCrf"
+                                onChange={onNumberChange}
+                                value={state.outputCrf}
                             />
                         </Col>
                     </Row>

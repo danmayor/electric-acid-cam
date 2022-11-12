@@ -3,16 +3,25 @@
  * Program (App) when requesting that we launch acid cam.
  */
 export default interface LaunchRequest {
+    beatsPerMinute?: number;
     canResize?: boolean;
     deviceIndex?: number;
     deviceResolution?: string;
+    enablePlayback?: boolean;
     filterIndex?: number;
     inputMode: "capture" | "file";
     isFullscreen?: boolean;
+    outputAt?: string;
+    outputCrf?: number;
+    outputFolder?: string;
     outputFps?: number;
     outputMonitor?: number;
+    playlistShuffle?: boolean;
+    shaderAutoFilter?: string;
     shaderIndex?: number;
+    shaderMaterial?: string;
     shaderPath?: string;
+    shaderPlaylist?: string;
     startAtIndex?: number;
     videoFilename?: string;
     videoFileRepeat?: boolean;

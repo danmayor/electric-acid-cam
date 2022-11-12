@@ -3,7 +3,7 @@ body,
 #appContainer {
     height: 100%;
     min-height: 100%;
-    font-size: .9rem;
+    font-size: 12px;
 }
 
 .content-container {
