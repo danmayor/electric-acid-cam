@@ -4,6 +4,7 @@ export interface TextInputProps {
     className?: string;
     error?: string;
     label: React.ReactNode | string;
+    name?: string;
     onChange: (e: React.FormEvent<HTMLInputElement>) => void;
     value?: string;
 }
@@ -14,9 +15,10 @@ const TextInput: React.FC<TextInputProps> = (props: TextInputProps) => {
 
         <input
             className="form-control"
+            name={props.name}
+            onChange={props.onChange}
             type="text"
             value={props.value}
-            onChange={props.onChange}
         />
 
         <div className="text-danger">{props.error ?? <>&nbsp;</>}</div>

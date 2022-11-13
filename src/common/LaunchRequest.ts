@@ -4,9 +4,29 @@
  */
 export default interface LaunchRequest {
     autoFilterFile?: string;            // -A (file picker)
-    cameraResolution?: string;          // -c (select available resolutions)
-    captureDevice?: number;             // -d (select available devices)
-    captureMode?: 'device' | 'file' | string; //just a helper
+
+    /**
+     * When captureMode is device, this is the camera resolution
+     * we capture / record at
+     * 
+     * -c {cameraResolution}
+     */
+    cameraResolution?: string;
+
+    /**
+     * When captureMode is device, this is the camera device
+     * index we will capture / record from
+     * 
+     * -d {captureDevice}
+     */
+    captureDevice?: number;
+
+    /**
+     * This helper tells the builder which capture mode we are
+     * creating the command string for
+     */
+    captureMode?: 'device' | 'file' | 'screen';
+
     codec?: string;                     // -X 
     colorMap?: string;                  // -C
     customFilterPath?: string;          // -W (folder picker)
@@ -18,9 +38,32 @@ export default interface LaunchRequest {
     filterStartIndex?: number;          // -S (number)
     fps?: number;                       // -u (number)
     fullscreenMode?: number;            // -f (maximized window) or -F (full screen) (select)
-    inputVideoStartAt?: number;         // -7 (number)
-    inputVideoFilename?: string;        // -i (file picker)
-    inputVideoLoop?: boolean;           // -R (switch)
+
+    /**
+     * When capture mode is file this is the start position
+     * in seconde where we should begin playback of the 
+     * input video filename
+     * 
+     * -7 {inputVideoStartAt}
+     */
+    inputVideoStartAt?: number;
+
+    /**
+     * When capture mode is file this is the filename of the
+     * input video we will playback
+     * 
+     * -i {inputVideoFilename}
+     */
+    inputVideoFilename?: string;
+
+    /**
+     * When capture mode is file this indicates if we will loop
+     * or repeat the input video playback
+     * 
+     * -R
+     */
+    inputVideoLoop?: boolean;
+
     logToSocket?: string;               // -P
     materialTexture?: string;           // -T (file picker)
     monitorIndex?: number;              // -M (select of available monitors)
@@ -32,8 +75,15 @@ export default interface LaunchRequest {
     playlistSlideshowTimeout?: number;  // -N (number)
     printFilterName?: string;           // -n (free text)
     restoreBlack?: boolean;             // -b (switch)
-    screenCaptureMode?: boolean;        // -G (switch)
-    screenCapturePosition?: string;     // -U (free text x,y)
+
+    /**
+     * When capture mode is screen this indicates the x,y screen
+     * position to capture from
+     * 
+     * -U {screenCapturePosition}
+     */
+    screenCapturePosition?: string;
+    
     shaderPath?: string;                // -p (folder picker)
     shaderStartIndex?: number;          // -H (number)
     shortcutKeyFile?: string;           // -k (file picker)
@@ -47,4 +97,29 @@ export default interface LaunchRequest {
 export const DefaultLaunchRequest: LaunchRequest = {
     cameraResolution: '1280x720',
     captureMode: 'device'
+}
+
+// todo break this out with better error handling
+export const buildLaunchCommand = (launchRequest: LaunchRequest): string => {
+    let command = '';
+
+    if (launchRequest.captureMode === 'device') {
+        command
+            += (launchRequest.captureDevice ? `-d ${launchRequest.captureDevice} ` : '')
+            + (launchRequest.cameraResolution ? `-c ${launchRequest.cameraResolution}` : '');
+        
+    } else if (launchRequest.captureMode === 'file') {
+        command
+            += (launchRequest.inputVideoFilename ? `-i ${launchRequest.inputVideoFilename}` : '')
+            + (launchRequest.inputVideoLoop === true ? '-R' : '')
+            + (launchRequest.inputVideoStartAt ? `-7 ${launchRequest.inputVideoStartAt}` : '');
+        
+    } else if (launchRequest.captureMode === 'screen') {
+        command
+            += '-G'
+            + (launchRequest.screenCapturePosition ? `-U ${launchRequest.screenCapturePosition}` : '');
+        
+    }
+
+    return command;
 }

@@ -37,6 +37,7 @@ const LaunchInputOptions: React.FC<LaunchInputOptionsProps> = (props: LaunchInpu
                             onChange={handleChange}
                             options={[
                                 { label: 'Device', value: 'device' },
+                                { label: 'Screen Capture', value: 'screen' },
                                 { label: 'Video File', value: 'file' }
                             ]}
                             value={launchRequest.captureMode}
@@ -97,6 +98,17 @@ const LaunchInputOptions: React.FC<LaunchInputOptionsProps> = (props: LaunchInpu
                                 name="inputVideoStartAt"
                                 onChange={handleChange}
                                 value={launchRequest.inputVideoStartAt}
+                            />
+                        </Col>
+                    </>}
+
+                    {launchRequest.captureMode === 'screen' && <>
+                        <Col xs={12} sm={4}>
+                            <TextInput
+                                label="Screen Capture Position:"
+                                name="screenCapturePosition"
+                                onChange={handleChange}
+                                value={launchRequest.screenCapturePosition}
                             />
                         </Col>
                     </>}
