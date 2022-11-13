@@ -83,7 +83,7 @@ export default interface LaunchRequest {
      * -U {screenCapturePosition}
      */
     screenCapturePosition?: string;
-    
+
     shaderPath?: string;                // -p (folder picker)
     shaderStartIndex?: number;          // -H (number)
     shortcutKeyFile?: string;           // -k (file picker)
@@ -96,7 +96,10 @@ export default interface LaunchRequest {
 
 export const DefaultLaunchRequest: LaunchRequest = {
     cameraResolution: '1280x720',
-    captureMode: 'device'
+    captureDevice: 0,
+    captureMode: 'device',
+    inputVideoLoop: false,
+    screenCapturePosition: '0,0'
 }
 
 // todo break this out with better error handling
@@ -105,21 +108,21 @@ export const buildLaunchCommand = (launchRequest: LaunchRequest): string => {
 
     if (launchRequest.captureMode === 'device') {
         command
-            += (launchRequest.captureDevice ? `-d ${launchRequest.captureDevice} ` : '')
-            + (launchRequest.cameraResolution ? `-c ${launchRequest.cameraResolution}` : '');
+            += (launchRequest.captureDevice ? `-d ${launchRequest.captureDevice} ` : '-d 0 ')
+            + (launchRequest.cameraResolution ? `-c ${launchRequest.cameraResolution} ` : '');
         
     } else if (launchRequest.captureMode === 'file') {
         command
-            += (launchRequest.inputVideoFilename ? `-i ${launchRequest.inputVideoFilename}` : '')
-            + (launchRequest.inputVideoLoop === true ? '-R' : '')
-            + (launchRequest.inputVideoStartAt ? `-7 ${launchRequest.inputVideoStartAt}` : '');
-        
+            += (launchRequest.inputVideoFilename ? `-i "${launchRequest.inputVideoFilename}" ` : '')
+            + (launchRequest.inputVideoLoop ? '-R ' : '')
+            + (launchRequest.inputVideoStartAt ? `-7 ${launchRequest.inputVideoStartAt} ` : '');
+
     } else if (launchRequest.captureMode === 'screen') {
         command
-            += '-G'
-            + (launchRequest.screenCapturePosition ? `-U ${launchRequest.screenCapturePosition}` : '');
+            += '-G '
+            + (launchRequest.screenCapturePosition ? `-U ${launchRequest.screenCapturePosition} ` : '-U 0,0');
         
     }
 
     return command;
-}
+};

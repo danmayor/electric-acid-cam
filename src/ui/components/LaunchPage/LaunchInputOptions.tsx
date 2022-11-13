@@ -20,10 +20,17 @@ const LaunchInputOptions: React.FC<LaunchInputOptionsProps> = (props: LaunchInpu
      * Internal handler that will call our props.setLaunchRequest
      */
     const handleChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
-        setLaunchRequest({
-            ...launchRequest,
-            [e.currentTarget.name]: e.currentTarget.value
-        });
+        if (launchRequest[e.currentTarget.name] === true || launchRequest[e.currentTarget.name] === false) {
+            setLaunchRequest({
+                ...launchRequest,
+                [e.currentTarget.name]: !launchRequest[e.currentTarget.name]
+            });
+        } else {
+            setLaunchRequest({
+                ...launchRequest,
+                [e.currentTarget.name]: e.currentTarget.value
+            });
+        }
     }, [launchRequest, setLaunchRequest]);
 
     return <>

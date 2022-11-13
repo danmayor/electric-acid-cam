@@ -16,6 +16,7 @@ const SwitchInput: React.FC<SwitchInputProps> = (props: SwitchInputProps) => {
             className="react-switch-checkbox"
             checked={props.value}
             id={`react-switch-new-${props.name}`}
+            name={props.name}
             onChange={props.onChange}
             type="checkbox"
         />

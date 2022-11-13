@@ -28,7 +28,7 @@ const LaunchPage: React.FC = () => {
      */
     const onLaunchClick = React.useCallback(() => {
         window.app.launchAcidCam(state);
-    }, []);
+    }, [state]);
 
     /**
      * Allows a tab component input to request os folder picker

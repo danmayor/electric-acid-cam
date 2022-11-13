@@ -11,6 +11,7 @@ import { LogLevel } from '@digivance/applogger/applogger';
 import AppManager from './AppManager';
 import WindowManager from './WindowManager';
 import ConfigManager from './ConfigManager';
+import LaunchRequest, { buildLaunchCommand } from '../common/LaunchRequest';
 
 /**
  * Adds our window.electronAPI property to global definitions
@@ -70,6 +71,12 @@ class Program {
         ]);
     }
 
+    public launchAcidCam(launchRequest: LaunchRequest) {
+        const command = buildLaunchCommand(launchRequest);
+        this.logger.logInfo('Build from command', launchRequest);
+        this.logger.logInfo('Launching acidcam...', `acidcam.exe ${command}`);
+    }
+
     /**
      * Main entry point, creates our browser window, registers handlers and
      * loads the UI renderer content.
@@ -89,7 +96,7 @@ class Program {
             this.appManager.close();
         });
 
-        //ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command));
+        ipcMain.on('app/launch', (_, command: LaunchRequest) => this.launchAcidCam(command));
 
         ipcMain.on('app/maximize', this.windowManager.maximize);
         ipcMain.on('app/minimize', this.windowManager.minimize);
