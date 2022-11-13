@@ -12,6 +12,9 @@ module.exports = [
                 use: [{ loader: 'ts-loader' }]
             }]
         },
+        resolve: {
+            extensions: ['.ts', '.js']
+        },
         output: {
             path: __dirname + '/dist',
             filename: 'acid-cam.js'

@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, OpenDialogOptions, OpenDialogReturnValue } from "electron";
 import AppSettings from "./AppSettings";
-import LaunchRequest from "./ipc/LaunchRequest";
+import LaunchRequest from "./LaunchRequest";
 
 // Link our AppApi methods so the UI can send the request to the App
 // These are the ipc channels for ./AppApi.ts

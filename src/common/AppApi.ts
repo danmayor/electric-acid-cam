@@ -1,6 +1,6 @@
 import { OpenDialogOptions, OpenDialogReturnValue } from "electron";
 import AppSettings from "./AppSettings";
-import LaunchRequest from "./ipc/LaunchRequest";
+import LaunchRequest from "./LaunchRequest";
 
 /**
  * Defines the window.App type we use to communicate from UI (renderer)
