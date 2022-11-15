@@ -55,24 +55,34 @@ class Program {
      * Creates this.logger from current appsettings.
      */
     public createLogger() {
-        const contents = fs.readFileSync(path.join(__dirname, '.appsettings'), 'utf8');
-        const appSettings = JSON.parse(contents) as AppSettings;
+        const appSettingsFilename = path.join(__dirname, '.appsettings');
+        let appSettings = {
+            acidCamPath: path.join(__dirname, 'acidcam'),
+            capturePath: path.join(__dirname, 'capture'),
+            logLevel: LogLevel.info,
+            logPath: path.join(__dirname, 'logs')
+        } as AppSettings;
 
-        const logLevel = appSettings?.logLevel ?? LogLevel.info;
-        const logPath = appSettings?.logPath ?? path.join(__dirname, 'logs');
+        if (fs.existsSync(appSettingsFilename)) {
+            const contents = fs.readFileSync(appSettingsFilename, 'utf8');
+            appSettings = JSON.parse(contents);
+
+            appSettings.logPath = appSettings?.logPath ?? path.join(__dirname, 'logs');
+            appSettings.logLevel = appSettings?.logLevel ?? LogLevel.info;
+        }
 
         this.logger = new AppLogger([
             /**
              * Default console provider
              */
-            new ConsoleProvider({ minLogLevel: logLevel }),
+            new ConsoleProvider({ minLogLevel: appSettings.logLevel }),
 
             /**
              * File provider with daily rotation and saving to our logging path
              */
             new FileProvider({
-                filePath: logPath,
-                minLogLevel: logLevel,
+                filePath: appSettings.logPath,
+                minLogLevel: appSettings.logLevel,
                 rotationInterval: FileProviderRotationInterval.daily
             })
         ]);
