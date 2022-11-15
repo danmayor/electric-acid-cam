@@ -5,6 +5,8 @@ import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import LaunchRequest, { DefaultLaunchRequest } from '../../common/LaunchRequest';
 import LaunchInputOptions from './LaunchPage/LaunchInputOptions';
 import PageHeader from './common/PageHeader';
+import LaunchShaderOptions from './LaunchPage/LaunchShaderOptions';
+import LaunchOutputOptions from './LaunchPage/LaunchOutputOptions';
 
 interface LaunchPageState extends LaunchRequest {
     currentTab: string;
@@ -93,6 +95,7 @@ const LaunchPage: React.FC = () => {
                     <NavLink
                         active={state.currentTab === LaunchPageTabs.input}
                         onClick={() => handleTabChange(LaunchPageTabs.input)}
+                        role="button"
                     >
                         Input Options
                     </NavLink>
@@ -102,6 +105,7 @@ const LaunchPage: React.FC = () => {
                     <NavLink
                         active={state.currentTab === LaunchPageTabs.shader}
                         onClick={() => handleTabChange(LaunchPageTabs.shader)}
+                        role="button"
                     >
                         Shader Options
                     </NavLink>
@@ -111,6 +115,7 @@ const LaunchPage: React.FC = () => {
                     <NavLink
                         active={state.currentTab === LaunchPageTabs.output}
                         onClick={() => handleTabChange(LaunchPageTabs.output)}
+                        role="button"
                     >
                         Output Options
                     </NavLink>
@@ -121,18 +126,18 @@ const LaunchPage: React.FC = () => {
                 <TabPane tabId={LaunchPageTabs.input}>
                     <LaunchInputOptions
                         launchRequest={state}
-                        setFilePicker={handleFilePicker}
-                        setFolderPicker={handleFolderPicker}
                         setLaunchRequest={handleSetLaunchRequest}
                     />
                 </TabPane>
 
                 <TabPane tabId={LaunchPageTabs.shader}>
-                    Shader options coming soon
+                    <LaunchShaderOptions
+                    />
                 </TabPane>
 
                 <TabPane tabId={LaunchPageTabs.output}>
-                    Output options coming soon
+                    <LaunchOutputOptions
+                    />
                 </TabPane>
             </TabContent>
         </div>

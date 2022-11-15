@@ -9,13 +9,11 @@ import TextInput from '../common/TextInput';
 
 export interface LaunchInputOptionsProps {
     launchRequest: LaunchRequest;
-    setFilePicker: (fieldName: string) => void;
-    setFolderPicker: (fieldName: string) => void;
     setLaunchRequest: (launchRequest: LaunchRequest) => void;
 }
 
 const LaunchInputOptions: React.FC<LaunchInputOptionsProps> = (props: LaunchInputOptionsProps) => {
-    const { launchRequest, setFilePicker, setFolderPicker, setLaunchRequest } = props;
+    const { launchRequest, setLaunchRequest } = props;
 
     /**
      * Internal handler that will call our props.setLaunchRequest
