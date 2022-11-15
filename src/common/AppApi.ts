@@ -35,5 +35,10 @@ export default interface AppApi {
     /**
      * Defined in program.selectFolder
      */
+    selectFile: (command?: OpenDialogOptions) => Promise<OpenDialogReturnValue>;
+
+    /**
+     * Defined in program.selectFolder
+     */
     selectFolder: (command?: OpenDialogOptions) => Promise<OpenDialogReturnValue>;
 };

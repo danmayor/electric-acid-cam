@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { FaFolder } from 'react-icons/fa';
+import { FaFile } from 'react-icons/fa';
 import { FormGroup } from 'reactstrap';
 
-export interface FolderSelectInputProps {
+export interface FileSelectInputProps {
     className?: string;
     error?: string;
     label: React.ReactNode | string;
@@ -12,14 +12,14 @@ export interface FolderSelectInputProps {
 }
 
 /**
- * Simple file path selector component
+ * Simple file selector component
  * 
- * @param props FolderSelectInputProps
- * @returns FolderSelectInput component
+ * @param props FileSelectInputProps
+ * @returns FileSelectInput component
  */
-const FolderSelectInput: React.FC<FolderSelectInputProps> = (props: FolderSelectInputProps) => {
+const FileSelectInput: React.FC<FileSelectInputProps> = (props: FileSelectInputProps) => {
     const handleSelect = React.useCallback(async () => {
-        const res = await window.app.selectFolder();
+        const res = await window.app.selectFile();
 
         if (!res.canceled) {
             const e = {
@@ -35,10 +35,10 @@ const FolderSelectInput: React.FC<FolderSelectInputProps> = (props: FolderSelect
 
     return <FormGroup className={`form-group ${props.className}`}>
         <label className="input-label">{props.label}</label>
-        <FaFolder className="form-control-picker ps-1" onClick={handleSelect} role="button" />
+        <FaFile className="form-control-picker" onClick={handleSelect} role="button" />
         <input className="form-control" name={props.name} onChange={props.onChange} type="text" value={props.value} />
         <div className="text-danger">{props.error ?? <>&nbsp;</>}</div>
     </FormGroup>
 };
 
-export default FolderSelectInput;
+export default FileSelectInput;

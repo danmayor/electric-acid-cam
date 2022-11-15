@@ -1,7 +1,8 @@
 import { LogLevel } from '@digivance/applogger/applogger';
 import * as React from 'react';
+import { FaInfo } from 'react-icons/fa';
 import { MdOutlineSettingsApplications } from 'react-icons/md';
-import { Card, CardBody, CardFooter, CardHeader, Col, Input, Row, Toast, ToastBody } from 'reactstrap';
+import { Alert, Card, CardBody, CardFooter, CardHeader, Col, Input, Row, Toast, ToastBody } from 'reactstrap';
 import AppSettings from '../../common/AppSettings';
 import FolderSelectInput from './common/FolderSelectInput';
 import PageHeader from './common/PageHeader';
@@ -35,8 +36,8 @@ const SettingsPage: React.FC = () => {
     const [state, setState] = React.useState(initialSettingsPageState);
 
     /**
-     * This will run when we first enter the Settings page, it loads our AppSettings
-     * from ./.appsettings file, or will load up the defaults
+     * On page load this will get the current appsettings from our main app process
+     * (which will load the file if necessary)
      */
     React.useEffect(() => {
         const getAppSettings = async () => {
@@ -50,35 +51,21 @@ const SettingsPage: React.FC = () => {
 
         getAppSettings();
     }, []);
-    
+
     /**
-     * Handles numeric state value changes
+     * Handles state changes to the appsettings (not committed to the app yet)
      */
-    const onNumberChange = React.useCallback(async (e: React.FormEvent<HTMLInputElement>) => {
+    const handleChange = React.useCallback((e: React.FormEvent<HTMLInputElement>) => { 
         setState({
             ...state,
-            [e.currentTarget.name]: Number.parseInt(e.currentTarget.value)
+            [e.currentTarget.name]: e.currentTarget.value
         });
     }, [state, setState]);
-
+    
     /**
-     * Displays the OS folder picker and sets selection to state
+     * Commits the current state to our main app process (which will save the file)
      */
-    const onPathChange = React.useCallback(async (name: string) => {
-        const res = await window.app.selectFolder();
-
-        if (!res.canceled) {
-            setState({
-                ...state,
-                [name]: res.filePaths[0]
-            });
-        }
-    }, [state, setState]);
-
-    /**
-     * Saves the current state AppSettings to file
-     */
-    const onSaveClick = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSave = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setState({
@@ -120,7 +107,7 @@ const SettingsPage: React.FC = () => {
             ]}
         />
 
-        <form onSubmit={onSaveClick}>
+        <form onSubmit={handleSave}>
             <Card>
                 <CardHeader>
                     <h3>Application Settings</h3>
@@ -133,7 +120,7 @@ const SettingsPage: React.FC = () => {
                                 className="mb-2"
                                 label="AcidCam path:"
                                 name="acidCamPath"
-                                onClick={onPathChange}
+                                onChange={handleChange}
                                 value={state.acidCamPath}
                             />
                         </Col>
@@ -143,7 +130,7 @@ const SettingsPage: React.FC = () => {
                                 className="mb-2"
                                 label="Capture path:"
                                 name="capturePath"
-                                onClick={onPathChange}
+                                onChange={handleChange}
                                 value={state.capturePath}
                             />
                         </Col>
@@ -158,13 +145,17 @@ const SettingsPage: React.FC = () => {
                 </CardHeader>
 
                 <CardBody>
+                    <Alert className="p-1" color="warning">
+                        <em><FaInfo /> Must restart electric acid cam for changes here to take effect</em>
+                    </Alert>
+                    
                     <Row>
                         <Col xs={12} sm={6}>
                             <FolderSelectInput
                                 className="mb-2"
                                 label="Log Path:"
                                 name="logPath"
-                                onClick={onPathChange}
+                                onChange={handleChange}
                                 value={state.logPath}
                             />
                         </Col>
@@ -173,7 +164,7 @@ const SettingsPage: React.FC = () => {
                             <SelectInput
                                 label="Log Level"
                                 name="logLevel"
-                                onChange={onNumberChange}
+                                onChange={handleChange}
                                 options={[
                                     { label: 'Trace', value: 0 },
                                     { label: 'Debug', value: 1 },

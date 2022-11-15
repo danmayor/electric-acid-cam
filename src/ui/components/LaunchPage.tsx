@@ -33,6 +33,20 @@ const LaunchPage: React.FC = () => {
     /**
      * Allows a tab component input to request os folder picker
      */
+    const handleFilePicker = React.useCallback(async (name: string) => {
+        const res = await window.app.selectFile();
+
+        if (!res.canceled) {
+            setState({
+                ...state,
+                [name]: res.filePaths[0]
+            });
+        }
+    }, [state, setState]);
+
+    /**
+     * Allows a tab component input to request os folder picker
+     */
     const handleFolderPicker = React.useCallback(async (name: string) => {
         const res = await window.app.selectFolder();
 
@@ -107,6 +121,7 @@ const LaunchPage: React.FC = () => {
                 <TabPane tabId={LaunchPageTabs.input}>
                     <LaunchInputOptions
                         launchRequest={state}
+                        setFilePicker={handleFilePicker}
                         setFolderPicker={handleFolderPicker}
                         setLaunchRequest={handleSetLaunchRequest}
                     />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import LaunchRequest from '../../../common/LaunchRequest';
-import FolderSelectInput from '../common/FolderSelectInput';
+import FileSelectInput from '../common/FileSelectInput';
 import NumericInput from '../common/NumericInput';
 import SelectInput from '../common/SelectInput';
 import SwitchInput from '../common/SwitchInput';
@@ -9,12 +9,13 @@ import TextInput from '../common/TextInput';
 
 export interface LaunchInputOptionsProps {
     launchRequest: LaunchRequest;
+    setFilePicker: (fieldName: string) => void;
     setFolderPicker: (fieldName: string) => void;
     setLaunchRequest: (launchRequest: LaunchRequest) => void;
 }
 
 const LaunchInputOptions: React.FC<LaunchInputOptionsProps> = (props: LaunchInputOptionsProps) => {
-    const { launchRequest, setFolderPicker, setLaunchRequest } = props;
+    const { launchRequest, setFilePicker, setFolderPicker, setLaunchRequest } = props;
 
     /**
      * Internal handler that will call our props.setLaunchRequest
@@ -83,9 +84,10 @@ const LaunchInputOptions: React.FC<LaunchInputOptionsProps> = (props: LaunchInpu
 
                     {launchRequest.captureMode === 'file' && <>
                         <Col xs={12} sm={4}>
-                            <FolderSelectInput
+                            <FileSelectInput
                                 label="Vide Filename:"
-                                onClick={() => setFolderPicker('inputVideoFilename')}
+                                name="inputVideoFilename"
+                                onChange={handleChange}
                                 value={launchRequest.inputVideoFilename}
                             />
                         </Col>

@@ -26,34 +26,45 @@ export default class ConfigManager {
         this.saveLaunchRequest = this.saveLaunchRequest.bind(this);
         this.setAppSettings = this.setAppSettings.bind(this);
         this.setLaunchRequest = this.setLaunchRequest.bind(this);
+
+        const loadAppSettings = async () => {
+            const appSettings = await this.loadAppSettings();
+            this.logger.logTrace('new ConfigManager()', appSettings);
+        }
+
+        loadAppSettings();
     }
 
     public getAppSettings(): AppSettings {
+        this.logger.logDebug('ConfigManager.getAppSettings()', this.appSettings);
         return this.appSettings;
     }
 
     public getLaunchRequest(): LaunchRequest {
+        this.logger.logTrace('ConfigManager.getLaunchRequest()');
         return this.launchRequest;
     }
 
     public async loadAppSettings(): Promise<AppSettings> {
+        this.logger.logTrace('ConfigManager.loadAppSettings()');
+
         if (fs.existsSync(this.appSettingsFilename)) {
             const contents = await fsa.readFile(this.appSettingsFilename, 'utf8');
+            this.logger.logDebug('Content loaded from file', contents);
             this.appSettings = JSON.parse(contents);
 
-            //this.appSettings.logPath = this.appSettings?.logPath ?? path.join(__dirname, 'logs');
-            //this.appSettings.logLevel = this.appSettings?.logLevel ?? LogLevel.info;
+            this.appSettings.logPath = this.appSettings?.logPath ?? path.join(__dirname, 'logs');
+            this.appSettings.logLevel = this.appSettings?.logLevel ?? LogLevel.info;
         } else {
-            console.log('From defaults');
             this.appSettings = {
                 acidCamPath: path.join(__dirname, 'acidcam'),
                 capturePath: path.join(__dirname, 'capture'),
                 logLevel: LogLevel.info,
                 logPath: path.join(__dirname, 'logs')
             };
+            this.logger.logDebug('Loading defaults...', this.appSettings);
         }
 
-        console.log('Loaded without error?');
         return this.appSettings;
     }
 

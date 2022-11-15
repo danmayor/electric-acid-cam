@@ -52,6 +52,18 @@ body,
     cursor: pointer;
 }
 
+.form-group .form-control-picker {
+    color: var(--bs-primary);
+    display: inline;
+    float: right;
+    font-size: 2em;
+    margin-top: 2px;
+}
+
+.form-group .form-control-picker + .form-control {
+    width: calc(100% - 2em);
+}
+
 .react-switch-checkbox {
     height: 0;
     width: 0;

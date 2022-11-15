@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { app, ipcMain, OpenDialogOptions } from 'electron';
 
 import AppLogger from '@digivance/applogger';
@@ -54,18 +55,24 @@ class Program {
      * Creates this.logger from current appsettings.
      */
     public createLogger() {
+        const contents = fs.readFileSync(path.join(__dirname, '.appsettings'), 'utf8');
+        const appSettings = JSON.parse(contents) as AppSettings;
+
+        const logLevel = appSettings?.logLevel ?? LogLevel.info;
+        const logPath = appSettings?.logPath ?? path.join(__dirname, 'logs');
+
         this.logger = new AppLogger([
             /**
              * Default console provider
              */
-            new ConsoleProvider({ minLogLevel: LogLevel.info }),
+            new ConsoleProvider({ minLogLevel: logLevel }),
 
             /**
              * File provider with daily rotation and saving to our logging path
              */
             new FileProvider({
-                filePath: path.join(__dirname, 'logs'),
-                minLogLevel: LogLevel.info,
+                filePath: logPath,
+                minLogLevel: logLevel,
                 rotationInterval: FileProviderRotationInterval.daily
             })
         ]);
@@ -107,6 +114,7 @@ class Program {
             this.configManager.saveAppSettings();
         });
 
+        ipcMain.handle('select/file', async (_, command: OpenDialogOptions) => this.windowManager.selectFile(command));
         ipcMain.handle('select/folder', async (_, command: OpenDialogOptions) => this.windowManager.selectFolder(command));
     }
 }
