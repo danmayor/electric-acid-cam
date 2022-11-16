@@ -29,13 +29,27 @@ export default interface LaunchRequest {
 
     codec?: string;                     // -X 
     colorMap?: string;                  // -C
-    customFilterPath?: string;          // -W (folder picker)
+
+    /**
+     * Path to filter files
+     * 
+     * -W "{customFilterPath}"
+     */
+    customFilterPath?: string;
+
     enablePlaybackFilterMode?: boolean; // -B (switch)
     enableSyphonServer?: boolean;       // -Y (switch)
     ffmpgCrf?: number;                  // -m (number)
     ffmpgPath?: string;                 // -1 (folder picker)
     ffmpgSupport?: number;              // -4 or -5 (switch)
-    filterStartIndex?: number;          // -S (number)
+
+    /**
+     * Index of the filter to start acid cam with
+     * 
+     * -S {filterStartIndex}
+     */
+    filterStartIndex?: number;
+
     fps?: number;                       // -u (number)
     fullscreenMode?: number;            // -f (maximized window) or -F (full screen) (select)
 
@@ -68,8 +82,21 @@ export default interface LaunchRequest {
     materialTexture?: string;           // -T (file picker)
     monitorIndex?: number;              // -M (select of available monitors)
     outputDebugStrings?: string[];      // -g (multi line text field)
-    outputFilename?: string;            // -o (save file as)
-    outputImageFormat?: string;         // -s (select png, tif, jpeg)
+
+    /**
+     * The filename (without path) to save recording to
+     * 
+     * -o "${outputFilename}"
+     */
+    outputFilename?: string;
+
+    /**
+     * Output file format
+     * 
+     * -s "{outputImageFormat}"
+     */
+    outputImageFormat?: string;
+
     outputResolution?: string;          // -r (select available resolutions)
     playlistFilters?: string;           // -L
     playlistSlideshowTimeout?: number;  // -N (number)
@@ -80,12 +107,24 @@ export default interface LaunchRequest {
      * When capture mode is screen this indicates the x,y screen
      * position to capture from
      * 
-     * -U {screenCapturePosition}
+     * -U "{screenCapturePosition}"
      */
     screenCapturePosition?: string;
 
-    shaderPath?: string;                // -p (folder picker)
-    shaderStartIndex?: number;          // -H (number)
+    /**
+     * The path to shaders that acid cam will use
+     * 
+     * -p "{shaderPath}"
+     */
+    shaderPath?: string;
+
+    /**
+     * The index of the shader that acid cam will start with
+     * 
+     * -H ${shaderStartIndex}
+     */
+    shaderStartIndex?: number;
+
     shortcutKeyFile?: string;           // -k (file picker)
     shuffleBeatsPerMinute?: number;     // -w (number)
     shufflePlaylist?: boolean;          // -q (switch)
@@ -99,6 +138,8 @@ export const DefaultLaunchRequest: LaunchRequest = {
     captureDevice: 0,
     captureMode: 'device',
     inputVideoLoop: false,
+    outputFilename: 'acid-capture.mpg',
+    outputImageFormat: 'mpg',
     screenCapturePosition: '0,0'
 }
 
@@ -120,9 +161,16 @@ export const buildLaunchCommand = (launchRequest: LaunchRequest): string => {
     } else if (launchRequest.captureMode === 'screen') {
         command
             += '-G '
-            + (launchRequest.screenCapturePosition ? `-U ${launchRequest.screenCapturePosition} ` : '-U 0,0');
+            + (launchRequest.screenCapturePosition ? `-U "${launchRequest.screenCapturePosition}" ` : '-U "0,0" ');
         
     }
+
+    command += (launchRequest.shaderPath ? `-p "${launchRequest.shaderPath}" ` : '')
+        + (launchRequest.shaderStartIndex ? `-H ${launchRequest.shaderStartIndex} ` : '-H 0 ')
+        + (launchRequest.customFilterPath ? `-W "${launchRequest.customFilterPath}" ` : '')
+        + (launchRequest.filterStartIndex ? `-S ${launchRequest.filterStartIndex} ` : '')
+        + (launchRequest.outputFilename ? `-o "${launchRequest.outputFilename}" ` : '')
+        + (launchRequest.outputImageFormat ? `-s "${launchRequest.outputImageFormat}" ` : '');
 
     return command;
 };

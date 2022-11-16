@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { Card, CardBody, Col, Row } from 'reactstrap';
+import { Card, CardBody } from 'reactstrap';
 import LaunchRequest from '../../../common/LaunchRequest';
-import FolderSelectInput from '../common/FolderSelectInput';
 
-interface LaunchShaderOptionsProps {
+interface LaunchAudioOptionsProps {
     launchRequest: LaunchRequest;
     setLaunchRequest: (launchRequest: LaunchRequest) => void;
 }
 
-const LaunchShaderOptions: React.FC<LaunchShaderOptionsProps> = (props: LaunchShaderOptionsProps) => {
+const LaunchAudioOptions: React.FC<LaunchAudioOptionsProps> = (props: LaunchAudioOptionsProps) => {
     const { launchRequest, setLaunchRequest } = props;
 
     /**
@@ -31,19 +30,10 @@ const LaunchShaderOptions: React.FC<LaunchShaderOptionsProps> = (props: LaunchSh
     return <>
         <Card>
             <CardBody>
-                <Row>
-                    <Col xs={12} sm={4}>
-                        <FolderSelectInput
-                            label="Shader Path:"
-                            name="shaderPath"
-                            onChange={handleChange}
-                            value={launchRequest.shaderPath}
-                        />
-                    </Col>
-                </Row>
+                Coming soon - Launch audio options
             </CardBody>
         </Card>
     </>;
 };
 
-export default LaunchShaderOptions;
+export default LaunchAudioOptions;

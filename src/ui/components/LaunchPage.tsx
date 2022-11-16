@@ -5,8 +5,9 @@ import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import LaunchRequest, { DefaultLaunchRequest } from '../../common/LaunchRequest';
 import LaunchInputOptions from './LaunchPage/LaunchInputOptions';
 import PageHeader from './common/PageHeader';
-import LaunchShaderOptions from './LaunchPage/LaunchShaderOptions';
+import LaunchVideoOptions from './LaunchPage/LaunchVideoOptions';
 import LaunchOutputOptions from './LaunchPage/LaunchOutputOptions';
+import LaunchAudioOptions from './LaunchPage/LaunchAudioOptions';
 
 interface LaunchPageState extends LaunchRequest {
     currentTab: string;
@@ -14,7 +15,8 @@ interface LaunchPageState extends LaunchRequest {
 
 const LaunchPageTabs = {
     input: 'input',
-    shader: 'shader',
+    audio: 'audio',
+    video: 'video',
     output: 'output'
 }
 
@@ -103,11 +105,21 @@ const LaunchPage: React.FC = () => {
 
                 <NavItem>
                     <NavLink
-                        active={state.currentTab === LaunchPageTabs.shader}
-                        onClick={() => handleTabChange(LaunchPageTabs.shader)}
+                        active={state.currentTab === LaunchPageTabs.audio}
+                        onClick={() => handleTabChange(LaunchPageTabs.audio)}
                         role="button"
                     >
-                        Shader Options
+                        Audio Options
+                    </NavLink>
+                </NavItem>
+
+                <NavItem>
+                    <NavLink
+                        active={state.currentTab === LaunchPageTabs.video}
+                        onClick={() => handleTabChange(LaunchPageTabs.video)}
+                        role="button"
+                    >
+                        Video Options
                     </NavLink>
                 </NavItem>
 
@@ -130,8 +142,15 @@ const LaunchPage: React.FC = () => {
                     />
                 </TabPane>
 
-                <TabPane tabId={LaunchPageTabs.shader}>
-                    <LaunchShaderOptions
+                <TabPane tabId={LaunchPageTabs.audio}>
+                    <LaunchAudioOptions
+                        launchRequest={state}
+                        setLaunchRequest={handleSetLaunchRequest}
+                    />
+                </TabPane>
+
+                <TabPane tabId={LaunchPageTabs.video}>
+                    <LaunchVideoOptions
                         launchRequest={state}
                         setLaunchRequest={handleSetLaunchRequest}
                     />
@@ -139,6 +158,8 @@ const LaunchPage: React.FC = () => {
 
                 <TabPane tabId={LaunchPageTabs.output}>
                     <LaunchOutputOptions
+                        launchRequest={state}
+                        setLaunchRequest={handleSetLaunchRequest}
                     />
                 </TabPane>
             </TabContent>
