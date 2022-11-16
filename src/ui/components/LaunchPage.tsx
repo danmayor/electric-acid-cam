@@ -132,6 +132,8 @@ const LaunchPage: React.FC = () => {
 
                 <TabPane tabId={LaunchPageTabs.shader}>
                     <LaunchShaderOptions
+                        launchRequest={state}
+                        setLaunchRequest={handleSetLaunchRequest}
                     />
                 </TabPane>
 
