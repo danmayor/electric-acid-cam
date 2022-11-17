@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import LaunchRequest from '../../../common/LaunchRequest';
+import FileSelectInput from '../common/FileSelectInput';
 import FolderSelectInput from '../common/FolderSelectInput';
 import NumericInput from '../common/NumericInput';
 
@@ -66,6 +67,17 @@ const LaunchVideoOptions: React.FC<LaunchVideoOptionsProps> = (props: LaunchVide
                             name="filterStartIndex"
                             onChange={handleChange}
                             value={launchRequest.filterStartIndex}
+                        />
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col xs={12} sm={3}>
+                        <FileSelectInput
+                            label="Material Texture:"
+                            name="materialTexture"
+                            onChange={handleChange}
+                            value={launchRequest.materialTexture}
                         />
                     </Col>
                 </Row>

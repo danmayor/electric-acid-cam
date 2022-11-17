@@ -91,7 +91,7 @@ class Program {
     public launchAcidCam(launchRequest: LaunchRequest) {
         const command = buildLaunchCommand(launchRequest);
         this.logger.logInfo('Build from command', launchRequest);
-        this.logger.logInfo('Launching acidcam...', `acidcam.exe ${command}`);
+        this.logger.logInfo(`Launching acidcam...\nacidcam.exe ${command}`);
     }
 
     /**

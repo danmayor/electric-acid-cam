@@ -39,9 +39,29 @@ export default interface LaunchRequest {
 
     enablePlaybackFilterMode?: boolean; // -B (switch)
     enableSyphonServer?: boolean;       // -Y (switch)
-    ffmpgCrf?: number;                  // -m (number)
-    ffmpgPath?: string;                 // -1 (folder picker)
-    ffmpgSupport?: number;              // -4 or -5 (switch)
+
+    /**
+     * FFMPG Crf?
+     * 
+     * -m {ffmpgCrf}
+     */
+    ffmpgCrf?: number;
+
+    /**
+     * FFMPG Path?
+     * 
+     * -1 "{ffmpgPath}"
+     */
+    ffmpgPath?: string;
+
+    /**
+     * FFMPG Support
+     * 
+     * 0 (Nothing)
+     * 1 x264 (-4)
+     * 2 x265 (-5)
+     */
+    ffmpgSupport?: number;
 
     /**
      * Index of the filter to start acid cam with
@@ -50,8 +70,21 @@ export default interface LaunchRequest {
      */
     filterStartIndex?: number;
 
-    fps?: number;                       // -u (number)
-    fullscreenMode?: number;            // -f (maximized window) or -F (full screen) (select)
+    /**
+     * Output fps
+     * 
+     * -u {fps}
+     */
+    fps?: number;
+
+    /**
+     * Number representing normal windowed, maximized window or fullscreen
+     * 
+     * 0 - Windowed
+     * 1 - Maximized
+     * 2 - Fullscreen
+     */
+    fullscreenMode?: number;
 
     /**
      * When capture mode is file this is the start position
@@ -79,9 +112,22 @@ export default interface LaunchRequest {
     inputVideoLoop?: boolean;
 
     logToSocket?: string;               // -P
-    materialTexture?: string;           // -T (file picker)
+
+    /**
+     * The material texture we use for shaders?
+     * 
+     * -T "{materialTexture}"
+     */
+    materialTexture?: string;
+
     monitorIndex?: number;              // -M (select of available monitors)
-    outputDebugStrings?: string[];      // -g (multi line text field)
+
+    /**
+     * Debug string ?
+     * 
+     * -g "{outputDebugStrings}"
+     */
+    outputDebugStrings?: string;
 
     /**
      * The filename (without path) to save recording to
@@ -97,9 +143,27 @@ export default interface LaunchRequest {
      */
     outputImageFormat?: string;
 
+    /**
+     * Resolution of the output
+     * 
+     * -f "{outputResolution}"
+     */
     outputResolution?: string;          // -r (select available resolutions)
-    playlistFilters?: string;           // -L
-    playlistSlideshowTimeout?: number;  // -N (number)
+
+    /**
+     * Playlist filters?
+     * 
+     * -L "${playlistFilters}"
+     */
+    playlistFilters?: string;
+
+    /**
+     * Playlist slideshow timeout
+     * 
+     * -N ${playlistSlideshowTimeout}
+     */
+    playlistSlideshowTimeout?: number;
+
     printFilterName?: string;           // -n (free text)
     restoreBlack?: boolean;             // -b (switch)
 
@@ -126,8 +190,21 @@ export default interface LaunchRequest {
     shaderStartIndex?: number;
 
     shortcutKeyFile?: string;           // -k (file picker)
-    shuffleBeatsPerMinute?: number;     // -w (number)
-    shufflePlaylist?: boolean;          // -q (switch)
+
+    /**
+     * Shuffle beats per minute?
+     * 
+     * -w ${shuffleBeatsPerMinute}
+     */
+    shuffleBeatsPerMinute?: number;
+
+    /**
+     * Shuffle playlist
+     * 
+     * -q
+     */
+    shufflePlaylist?: boolean;
+
     snapshotPrefix?: string;            // -e (free text)
     startingFilterName?: string;        // -Z (free text)
     stereoMode?: boolean;               // -x (switch)
@@ -170,7 +247,21 @@ export const buildLaunchCommand = (launchRequest: LaunchRequest): string => {
         + (launchRequest.customFilterPath ? `-W "${launchRequest.customFilterPath}" ` : '')
         + (launchRequest.filterStartIndex ? `-S ${launchRequest.filterStartIndex} ` : '')
         + (launchRequest.outputFilename ? `-o "${launchRequest.outputFilename}" ` : '')
-        + (launchRequest.outputImageFormat ? `-s "${launchRequest.outputImageFormat}" ` : '');
+        + (launchRequest.outputImageFormat ? `-s "${launchRequest.outputImageFormat}" ` : '')
+        + (launchRequest.outputResolution ? `-r "${launchRequest.outputResolution}" ` : '')
+        + (launchRequest.fps ? `-u ${launchRequest.fps} ` : '-u 60 ')
+        + (launchRequest.fullscreenMode === 1 ? '-f ' : '')
+        + (launchRequest.fullscreenMode === 2 ? '-F ' : '')
+        + (launchRequest.materialTexture ? `-T "${launchRequest.materialTexture}" ` : '')
+        + (launchRequest.outputDebugStrings ? `-g "${launchRequest.outputDebugStrings}" ` : '')
+        + (launchRequest.playlistFilters ? `-L "${launchRequest.playlistFilters}" ` : '')
+        + (launchRequest.playlistSlideshowTimeout ? `-N ${launchRequest.playlistSlideshowTimeout} ` : '')
+        + (launchRequest.shuffleBeatsPerMinute ? `-w ${launchRequest.shuffleBeatsPerMinute} ` : '')
+        + (launchRequest.shufflePlaylist === true ? '-q ' : '')
+        + (launchRequest.ffmpgCrf ? `-m ${launchRequest.ffmpgCrf} ` : '')
+        + (launchRequest.ffmpgPath ? `-1 "${launchRequest.ffmpgPath}" ` : '')
+        + (launchRequest.ffmpgSupport === 1 ? '-4 ' : '')
+        + (launchRequest.ffmpgSupport === 2 ? '-5 ' : '');
 
     return command;
 };
