@@ -33,7 +33,7 @@ This document intends to explain the various options currently available in Acid
   - Resolution to record from camera at
 
 - Input file (-i) (Can not use with Camera device)
-  - Supported formats: mp4, mov, mk4
+  - Supported formats: mp4, mov, mkv
 
 - Loop video (-R) (Must use with Input file)
   - Loops the provided input file and keeps going
@@ -85,7 +85,7 @@ This document intends to explain the various options currently available in Acid
 
 - Output file (-o)
   - The output file to write to, supported file types are:
-    - mk4
+    - mkv
     - mov
     - mp4
 
